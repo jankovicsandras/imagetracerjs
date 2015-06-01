@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="utf-8" />
+	<title>imagetracer.js documentation</title>
+	<style>
+		canvas{ border: 1px solid magenta; display:inline; }
+		svg{ border: 1px solid magenta; display:inline; }
+		div{ display:inline; }
+		table,td,tr{border: 1px solid black; border-collapse: collapse; font-family:monospace; padding:0.5rem;}
+		code{color:rgb(0,0,128)}
+	</style>
+	<script src="imagetracer_v1.0.0.js"></script>
+	<script>
+	
+	var it = new ImageTracer();
+	
+	function example1(){
+		// Basic usage: loading image, tracing it and creating SVG string, then executing callback with the SVG string
+		// as argument: alert(svgstring). This happens asynchronously, when image is loaded (image.onload event)
+		it.imageToSVG( 'smiley.png', alert);
+	}
+	
+	function example2(){
+		// The same, but appendSVGString() is a simple helper function to display the SVG. 
+		// Without parameters, it will append the SVG to the end of document.body .
+		it.imageToSVG( 'smiley.png', it.appendSVGString );
+	}
+	
+	function example3(){
+		// The same, but with an options object.
+		// This shows the effects of low linear treshold: more round shapes, 
+		// low quadratic treshold: more polygonal shapes, and scaling.
+		it.imageToSVG( 'smiley.png', it.appendSVGString, { ltres:0.01, qtres:1, scale:10 } );
+		it.imageToSVG( 'smiley.png', it.appendSVGString, { ltres:1, qtres:0.01, scale:10 } );
+	}
+	
+	function example4(){
+		// The callback here will append the SVG to a container div with the id 'svgcontainer', 
+		// creating the div if it does not exist yet.
+		// This shows the effects of the 4 color palette 
+		it.imageToSVG(
+				'panda.png',
+				function(svgstr){ it.appendSVGString( svgstr, 'svgcontainer' ); },
+				{ numberofcolors:4 }
+				);
+		// The helper function loadImage() loads an image to a canvas, then executing callback: 
+		// appending the canvas to a div here
+		it.loadImage(
+				'panda.png',
+				function(canvas){ (document.getElementById('canvascontainer')).appendChild(canvas); }
+				);
+	}
+	
+	function example5(){
+		// Tracing ImageData to an SVG string synchronously. Run Example 4 before this. 
+		
+		// Getting ImageData from canvas with the helper function getImgdata()
+		var canvas = (document.getElementById('canvascontainer')).firstChild;
+		var imgd = it.getImgdata(canvas);
+		
+		// Tracing to an SVG string with more colors and probably better color quantization
+		var svgstr = it.imagedataToSVG( imgd, { numberofcolors:16, colorquantcycles:5 } );
+		
+		// Appending SVG
+		it.appendSVGString( svgstr, 'svgcontainer' );
+	}
+	
+	function example6(){
+		// This will load an image, trace it when loaded, and execute callback on the tracedata: 
+		// stringifying and alerting it here.
+		it.imageToTracedata(
+				'smiley.png',
+				function(tracedata){ alert( JSON.stringify( tracedata ) ); },
+				{ ltres:0.01, qtres:1, scale:10 }
+		);
+	}
+	
+	
+	function example7(){
+		// imagedataToTracedata() is very similar to the previous functions.
+		// This returns tracedata synchronously.
+		it.loadImage(
+				'smiley.png',
+				function(canvas){ 
+					var imgd = it.getImgdata(canvas);
+					
+					var tracedata = it.imagedataToTracedata( imgd, { ltres:1, qtres:0.01, scale:10 } );
+					
+					alert( JSON.stringify( tracedata ) );
+				}
+		);
+	}
+	
+	function disablebuttons(){
+		var buttons = document.querySelectorAll("button");
+		for(var i=0;i<buttons.length;i++){buttons[i].disabled = true;} 
+	}
+	
+	function enablebuttons(){
+		var buttons = document.querySelectorAll("button");
+		for(var i=0;i<buttons.length;i++){buttons[i].disabled = false;} 
+	}
+	
+	</script>
+	</head>
+	<body>
+	<noscript>Please enable JavaScript!</noscript>
+	
+	<h1>imagetracer.js</h1>
+	<h2>Simple raster image tracer and vectorizer written in JavaScript.</h2>
+	<h3>by András Jankovics 2015 <a href="mailto:jankovicsandras@gmail.com">jankovicsandras@gmail.com</a></h3>
+	
+<hr>	
+	<p>
+		<h4>Initialization</h4>
+		Before calling the functions, the library must be included:
+<pre><b><code>
+&lt;script src="imagetracer_0.8.js"&gt;&lt;/script&gt;
+</code></b></pre>		
+		Then an ImageTracer object must be created:
+<pre><b><code>
+var it = new ImageTracer();
+</code></b></pre>		
+	</p>
+<hr>
+	
+	<p>
+		<h4>Example 1</h4>
+		Basic usage: loading image, tracing it and creating SVG string, then executing callback with the SVG string as argument: alert(svgstring).<br>
+		This happens asynchronously, when image is loaded (image.onload event).<br>
+<pre><b><code>
+it.imageToSVG( 'smiley.png', alert );
+</code></b></pre>
+		<button id="button1" onclick="disablebuttons();example1();enablebuttons();" >Run Example 1</button>
+	</p>
+<hr>
+
+
+	
+	<p>
+		<h4>Example 2</h4>
+		The same, but appendSVGString() is a simple helper function to display the SVG.<br>
+		Without parameters, it will append the SVG to the end of document.body .<br>
+<pre><b><code>
+it.imageToSVG( 'smiley.png', it.appendSVGString );
+</code></b></pre>
+		<button id="button2" onclick="disablebuttons();example2();enablebuttons();" >Run Example 2</button>
+	</p>
+<hr>
+
+
+	
+	<p>
+		<h4>Example 3</h4>
+		The same, but with an options object.<br>
+		This shows the effects of low linear treshold: more round shapes, low quadratic treshold: more polygonal shapes, and scaling.<br>
+<pre><b><code>
+it.imageToSVG( 'smiley.png', it.appendSVGString, { ltres:0.01, qtres:1, scale:10 } );
+it.imageToSVG( 'smiley.png', it.appendSVGString, { ltres:1, qtres:0.01, scale:10 } );
+</code></b></pre>
+		<button id="button3" onclick="disablebuttons();example3();enablebuttons();" >Run Example 3</button>
+	</p>
+<hr>
+
+
+	
+	<p>
+		<h4>Example 4</h4>
+		The callback here will append the SVG to a container div with the id 'svgcontainer', creating the div if it does not exist yet.
+		This shows the effects of the 4 color palette.
+<pre><b><code>
+it.imageToSVG(
+	'panda.png',
+	function(svgstr){ it.appendSVGString( svgstr, 'svgcontainer' ); },
+	{ numberofcolors:4 }
+);
+</code></b></pre>
+		The helper function loadImage() loads an image to a canvas, then executing callback: appending the canvas to a div here.
+<pre><b><code>
+it.loadImage(
+	'panda.png',
+	function(canvas){ (document.getElementById('canvascontainer')).appendChild(canvas); }
+);
+</code></b></pre>
+		<button id="button4" onclick="disablebuttons();example4();enablebuttons();" >Run Example 4</button>
+	</p>
+<hr>
+
+
+	
+	<p>
+		<h4>Example 5</h4>
+		Tracing ImageData to an SVG string synchronously. Run Example 4 before this.<br>
+		<br>
+		Getting ImageData from canvas with the helper function getImgdata()<br>
+<pre><b><code>
+var canvas = (document.getElementById('canvascontainer')).firstChild;
+var imgd = it.getImgdata( canvas );
+</code></b></pre>
+		Tracing to an SVG string with more colors and probably better color quantization<br>
+<pre><b><code>
+var svgstr = it.imagedataToSVG( imgd, { numberofcolors:16, colorquantcycles:5 } );
+</code></b></pre>
+		Appending SVG<br>
+<pre><b><code>
+it.appendSVGString( svgstr, 'svgcontainer' );
+</code></b></pre>		
+		<button id="button5" onclick="disablebuttons();example5();enablebuttons();" >Run Example 5</button>
+	</p>
+<hr>
+
+
+	
+	
+	<p>
+		<h4>Example 6</h4>
+		This will load an image, trace it when loaded, and execute callback on the tracedata: stringifying and alerting it here.<br>
+<pre><b><code>
+it.imageToTracedata(
+	'smiley.png',
+	function(tracedata){ alert( JSON.stringify( tracedata ) ); },
+	{ ltres:0.01, qtres:1, scale:10 }
+);
+</code></b>
+//
+//	The result is a tracedata object with 3 parts: pathdata, palette and background
+//	tracedata === {'layers': *pathdata* ,'palette': *palette* ,'background': *background* };
+//	
+//	palette is an array of color objects
+//	palette === [
+//		{ 'r':0, 'g':0, 'b':0, 'a':255 },
+//		...
+//	];
+//
+//	background is an integer, the number of the color used for the background
+//
+//	pathdata is an array of colorlayers and every colorlayer is an array of traced paths,
+//	so pathdata[colorlayernumber][pathnumber] identifies a traced path object.
+//
+//	A traced path object has a segments array and a type string, which is not used after pathscan(),
+//	so it might be removed in the future. 
+//	
+//	Every element in the segments array is a line segment object, its type 'Q' or 'L' means 
+//	Quadratic spline or straight Line as in SVG, the coordinates x1,y1, ... works also like in SVG.
+//
+//	So the structure of pathdata is something like this:
+//	pathdata[layernumber][pathnumber] === {
+//		'segments':[
+//			{'type':'Q', 'x1': ,'y1': , 'x2': ,'y2': , 'x3': ,'y3': }, 
+//			{'type':'L', 'x1': ,'y1': , 'x2': ,'y2': },
+//			...
+//		],
+//		'type': original_path.type
+//	}
+//	
+</pre>
+		<button id="button6" onclick="disablebuttons();example6();enablebuttons();" >Run Example 6</button>
+	</p>
+<hr>	
+
+	<p>
+		<h4>Example 7</h4>
+		imagedataToTracedata() is very similar to the previous functions.<br>
+		This returns tracedata synchronously.<br>
+<pre><b><code>
+it.loadImage(
+		'smiley.png',
+		function(canvas){ 
+			var imgd = it.getImgdata(canvas);
+			
+			var tracedata = it.imagedataToTracedata( imgd, { ltres:1, qtres:0.01, scale:10 } );
+			
+			alert( JSON.stringify( tracedata ) );
+		}
+);
+</code></b></pre>
+		<button id="button7" onclick="disablebuttons();example7();enablebuttons();" >Run Example 7</button>
+	</p>
+<hr>
+
+	
+	<h4>Main Functions</h4>
+	<table>
+<tr style="background-color:rgb(212,212,212)"><td>Function name</td><td>Arguments</td><td>Returns</td><td>Run type</td></tr>
+<tr><td>imageToSVG</td><td>image_url /*string*/ , callback /*function*/ , options /*optional object*/</td><td>Nothing, callback(svgstring) will be executed</td><td>Asynchronous</td></tr>
+<tr><td>imagedataToSVG</td><td><a href="https://developer.mozilla.org/en-US/docs/Web/API/ImageData">ImageData</a> /*object*/ , options /*optional object*/</td><td>svgstring /*string*/</td><td>Synchronous</td></tr>
+<tr><td>imageToTracedata</td><td>image_url /*string*/ , callback /*function*/ , options /*optional object*/</td><td>Nothing, callback(tracedata) will be executed</td><td>Asynchronous</td></tr>
+<tr><td>imagedataToTracedata</td><td><a href="https://developer.mozilla.org/en-US/docs/Web/API/ImageData">ImageData</a> /*object*/ , options /*optional object*/</td><td>tracedata /*object*/</td><td>Synchronous</td></tr>
+	</table>
+	
+	<h4>Helper Functions</h4>
+		<table>
+<tr style="background-color:rgb(212,212,212)"><td>Function name</td><td>Arguments</td><td>Returns</td><td>Run type</td></tr>
+<tr><td>appendSVGString</td><td>svgstring /*string*/, parentid /*string*/</td><td>Nothing, an SVG will be appended to the container div with id=parentid.</td><td>Synchronous</td></tr>
+<tr><td>loadImage</td><td>url /*string*/, callback /*function*/</td><td>Nothing, loading an image from a URL, then executing callback(canvas)</td><td>Asynchronous</td></tr>
+<tr><td>getImgdata</td><td><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas">canvas</a> /*object*/</td><td><a href="https://developer.mozilla.org/en-US/docs/Web/API/ImageData">ImageData</a> /*object*/</td><td>Synchronous</td></tr>
+	</table>
+<br>
+There are more functions for advanced users, read the source if you are interested. :)
+	
+	<h4>Options</h4>
+	<table>
+	<tr style="background-color:rgb(212,212,212)"><td>Option name</td><td>Default value</td><td>Meaning</td></tr>
+	<tr><td>ltres</td><td>1</td><td>Error treshold for straight lines. Use 0.001 instead of 0 if only round splines are required.</td></tr>
+	<tr><td>qtres</td><td>1</td><td>Error treshold for quadratic splines. Use 0.001 instead of 0 if only straight lines are required.</td></tr>
+	<tr><td>pathomit</td><td>8</td><td>Edge node paths shorter than this will be discarded for noise reduction. Use 1 instead of 0 to get paths around single pixels.</td></tr>
+	<tr><td>pal</td><td>No default value</td><td>Custom palette, an array of color objects: [ {r:0,g:0,b:0,a:255}, ... ]</td></tr>
+	<tr><td>numberofcolors</td><td>16</td><td>Number of colors to use on palette if pal object is not defined.</td></tr>
+	<tr><td>mincolorratio</td><td>0.02</td><td>Color quantization will randomize a color if fewer pixels than (total pixels*mincolorratio) has it.</td></tr>
+	<tr><td>colorquantcycles</td><td>3</td><td>Color quantization will be repeated this many times.</td></tr>
+	<tr><td>scale</td><td>1</td><td>Every coordinate will be multiplied with this, to scale the SVG.</td></tr>
+	<tr><td>lcpr</td><td>0</td><td>Straight line control point radius, if this is greater than zero, small circles will be drawn in the SVG. Do not use this for big/complex images.</td></tr>
+	<tr><td>qcpr</td><td>0</td><td>Quadratic spline control point radius, if this is greater than zero, small circles and lines will be drawn in the SVG. Do not use this for big/complex images.</td></tr>
+	<tr><td>layercontainerid</td><td>No default value</td><td>Edge node layers can be visualized if a container div's id is defined.</td></tr>
+	</table>
+	
+	<br>
+The almost complete options object:	
+	
+<pre><b><code>
+var options = { ltres:1, qtres:1, pathomit:8, numberofcolors:16, mincolorratio:0.02, colorquantcycles:3, scale:1, lcpr:0, qcpr:0 };
+</code></b></pre>
+	
+Adding custom palette. This will override numberofcolors.
+	
+<pre><b><code>
+options.pal = [{r:0,g:0,b:0,a:255}, {r:0,g:0,b:255,a:255}, {r:255,g:255,b:0,a:255}];
+</code></b></pre>
+	
+	
+<hr>	
+
+	<p>
+		<h3>Ideas for improvement</h3>
+		<ul>
+		<li> Error handling: there's very little error handling now, Out of memory can happen easily with big images or many layers.</li>
+		<li> Color quantization: other algorithms? </li>
+		<li> Color quantization: colors with few pixels are randomized, but probably the most distant colors should be found instead.</li>
+		<li> Tracing: finding more suitable sequences.</li>
+		<li> Tracing: 7. Set splitpoint = (fitting point + errorpoint)/2 ; this is just a guess, there might be a better splitpoint.</li>
+		<li> Tracing: 9. If splitpoint-endpoint is a spline, try to add new points from the next sequence; this is not implemented.</li>
+		<li> Tracing: cubic splines or other curves?</li>
+		<li> Default values: they are chosen because they seemed OK, not based on calculations.</li>
+		<li> Output: G-code or other output? https://en.wikipedia.org/wiki/G-code</li>
+		 </ul>
+	</p>
+<hr>	
+	<p>
+		<h3>License</h3>
+		PUBLIC DOMAIN
+<pre>	
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <a href="http://unlicense.org" >http://unlicense.org</a>
+</pre>	
+	</p>	
+	
+<hr>
+	
+	<div id="svgcontainer"></div>
+	<div id="canvascontainer"></div>
+	</body>
+</html>
