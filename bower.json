@@ -1,0 +1,26 @@
+{
+  "name": "imagetracerjs",
+  "version": "1.0.0",
+  "description": "Simple raster image tracer and vectorizer written in JavaScript.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/publiclab/Leaflet.DistortableImage.git"
+  },
+  "main": "imagetracer_v1.0.0.js",
+  "ignore": [
+    "bower.json",
+    "imagetracerjs_documentation.html",
+    "index.html",
+    "panda.png",
+    "README.md",
+    "smiley.png"
+  ],
+  "keywords": [
+    "vector",
+    "raster",
+    "vectorize",
+    "tracing"
+  ],
+  "author": "AndrÃ¡s Jankovics",
+  "license": "Public Domain"
+}
