@@ -6,7 +6,7 @@ by András Jankovics 2015
 ### Initialization
 Before calling the functions, the library must be included:
 ```
-<script src="imagetracer_v1.0.0.js"></script>
+<script src="imagetracer_v1.0.4.js"></script>
 ```
 Then an ImageTracer object must be created:
 ```
