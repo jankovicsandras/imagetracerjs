@@ -1,4 +1,5 @@
 # imagetracerjs
+![alt Bitmap to Svg](s1.png)
 Simple raster image tracer and vectorizer written in JavaScript.
 
 by András Jankovics 2015
@@ -124,6 +125,28 @@ Adding custom palette. This will override numberofcolors.
 ```
 options.pal = [{r:0,g:0,b:0,a:255}, {r:0,g:0,b:255,a:255}, {r:255,g:255,b:0,a:255}];
 ```
+### Process overview
+####1. Color quantization
+    The colorquantization function creates an indexed image (https://en.wikipedia.org/wiki/Indexed_color)
+    ![alt Original image (20x scale)](s2.png)
+####2. Layer separation and edge detection
+    The layering function creates arrays for every color, and calculates edge node types. These are at the center of every 4 pixels, shown here as dots.
+    s3 s4 s7
+####3. Pathscan
+    The pathscan function finds chains of edge nodes, example: the cyan dots and lines.
+    s8
+####4. Interpolation
+    The internodes function interpolates the coordinates of the edge node paths. Every line segment in the new path has one of the 8 directions (East, North East, N, NW, W, SW, S, SE).
+    s9 s10
+####5. Tracing
+    The tracepath function splits the interpolated paths into sequences with two directions.
+    s11
+    The fitseq function tries to fit a straight line on the start- and endpoint of the sequence (black line). If the distance error between the calculated points (black line) and actual sequence points (blue dots) is greater than the treshold, the point with the greates error is selected (red line).
+s12
+    The fitseq function tries to fit a quadratic spline through the error point.
+s13 s14 s15
+####6. SVG rendering
+
 ### Ideas for improvement
 - TODO: Node.js support - Canvas and ImageData is not supported by Node.js by default, but [canvas](https://www.npmjs.com/package/canvas) or other packages might solve this.
 - Error handling: there's very little error handling now, Out of memory can happen easily with big images or many layers.
