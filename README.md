@@ -151,7 +151,7 @@ The **tracepath** function splits the interpolated paths into sequences with two
 
 ![alt a sequence](s11.png)
 
-The **fitseq** function tries to fit a straight line on the start- and endpoint of the sequence (black line). If the distance error between the calculated points (black line) and actual sequence points (blue dots) is greater than the treshold, the point with the greates error is selected (red line).
+The **fitseq** function tries to fit a straight line on the start- and endpoint of the sequence (black line). If the distance error between the calculated points (black line) and actual sequence points (blue dots) is greater than the treshold, the point with the greatest error is selected (red line).
 
 ![alt fitting a straight line](s12.png)
 
