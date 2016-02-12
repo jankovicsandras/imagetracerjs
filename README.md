@@ -7,33 +7,33 @@ by András Jankovics 2015
 
 ### Initialization
 Before calling the functions, the library must be included:
-```
+```javascript
 <script src="imagetracer_v1.0.4.js"></script>
 ```
 Then an ImageTracer object must be created:
-```
+```javascript
 var it = new ImageTracer();
 ```
 ### Examples
 #### Example 1
 Basic usage: loading image, tracing it and creating SVG string, then executing callback with the SVG string as argument: alert(svgstring). This happens asynchronously, when image is loaded (image.onload event).
-```
+```javascript
 it.imageToSVG( 'smiley.png', alert );
 ```
 #### Example 2
 The same, but appendSVGString() is a simple helper function to display the SVG. Without parameters, it will append the SVG to the end of document.body .
-```
+```javascript
 it.imageToSVG( 'smiley.png', it.appendSVGString );
 ```
 #### Example 3
 The same, but with an options object. This shows the effects of low linear treshold: more round shapes, low quadratic treshold: more polygonal shapes, and scaling.
-```
+```javascript
 it.imageToSVG( 'smiley.png', it.appendSVGString, { ltres:0.01, qtres:1, scale:10 } );
 it.imageToSVG( 'smiley.png', it.appendSVGString, { ltres:1, qtres:0.01, scale:10 } );
 ```
 #### Example 4
 The callback here will append the SVG to a container div with the id 'svgcontainer', creating the div if it does not exist yet. This shows also the effects of the 4 color palette.
-```
+```javascript
 it.imageToSVG(
 	'panda.png',
 	function(svgstr){ it.appendSVGString( svgstr, 'svgcontainer' ); },
@@ -41,7 +41,7 @@ it.imageToSVG(
 );
 ```
 The helper function loadImage() loads an image to a canvas, then executing callback: appending the canvas to a div here.
-```
+```javascript
 it.loadImage(
 	'panda.png',
 	function(canvas){ (document.getElementById('canvascontainer')).appendChild(canvas); }
@@ -49,21 +49,21 @@ it.loadImage(
 ```
 #### Example 5
 Tracing ImageData to an SVG string synchronously. Run Example 4 before this. Getting ImageData from canvas with the helper function getImgdata().
-```
+```javascript
 var canvas = (document.getElementById('canvascontainer')).firstChild;
 var imgd = it.getImgdata( canvas );
 ```
 Tracing to an SVG string with more colors and probably better color quantization.
-```
+```javascript
 var svgstr = it.imagedataToSVG( imgd, { numberofcolors:16, colorquantcycles:5 } );
 ```
 Appending SVG
-```
+```javascript
 it.appendSVGString( svgstr, 'svgcontainer' );
 ```
 #### Example 6
 This will load an image, trace it when loaded, and execute callback on the tracedata: stringifying and alerting it here.
-```
+```javascript
 it.imageToTracedata(
 	'smiley.png',
 	function(tracedata){ alert( JSON.stringify( tracedata ) ); },
@@ -73,7 +73,7 @@ it.imageToTracedata(
 Read imagetracerjs_documentation.html or the source for details on the returned tracedata object.
 #### Example 7
 imagedataToTracedata() is very similar to the previous functions. This returns tracedata synchronously.
-```
+```javascript
 it.loadImage(
 		'smiley.png',
 		function(canvas){ 
@@ -119,11 +119,11 @@ There are more functions for advanced users, read the source if you are interest
 |layercontainerid|No default value|Edge node layers can be visualized if a container div's id is defined.|
 
 The almost complete options object:	
-```
+```javascript
 var options = { ltres:1, qtres:1, pathomit:8, numberofcolors:16, mincolorratio:0.02, colorquantcycles:3, scale:1, lcpr:0, qcpr:0 };
 ```
 Adding custom palette. This will override numberofcolors.
-```
+```javascript
 options.pal = [{r:0,g:0,b:0,a:255}, {r:0,g:0,b:255,a:255}, {r:255,g:255,b:0,a:255}];
 ```
 ### Process overview
