@@ -34,110 +34,153 @@
         <h1>
 <a id="imagetracerjs" class="anchor" href="#imagetracerjs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>imagetracerjs</h1>
 
-<p><img src="s1.png" alt="alt Bitmap to Svg"></p>
+<p><img src="https://raw.githubusercontent.com/jankovicsandras/imagetracerjs/master/s1.png" alt="alt Bitmap to Svg"></p>
 
 <p>Simple raster image tracer and vectorizer written in JavaScript.</p>
 
 <p>by András Jankovics 2015</p>
 
 <h3>
-<a id="initialization" class="anchor" href="#initialization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Initialization</h3>
+<a id="110-is-here" class="anchor" href="#110-is-here" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1.1.0 is here</h3>
 
-<p>Before calling the functions, the library must be included:</p>
+<ul>
+<li>it works with Node.js (external library required to load image into an ImageData object)</li>
+<li>export as AMD module / Node module / browser or worker variable</li>
+<li>new syntax: ImageTracer.imageToTracedata(), no need to initialize</li>
+<li>fixed options with hasOwnProperty: 0 values are not replaced with defaults, fixed polygons with coordinates x=0 or y=0</li>
+<li>transparency support: alpha is not discarded now, it is given more weight in color quantization</li>
+<li>new options.roundcoords : rounding coordinates to a given decimal place. This can reduce SVG length significantly (&gt;20%) with minor loss of precision.</li>
+<li>new options.desc : setting this to false will turn off path descriptions, reducing SVG length.</li>
+<li>new options.viewbox : setting this to true will use viewBox instead of exact width and height</li>
+<li>new options.colorsampling : color quantization will sample the colors now by default, can be turned off.</li>
+<li>new options.blurradius : setting this to 1..5 will preprocess the image with a selective Gaussian blur with options.blurdelta treshold. This can filter noise and improve quality.</li>
+<li>imagedataToTracedata() returns image width and height in tracedata</li>
+<li>getsvgstring() needs now only tracedata and options as parameters</li>
+<li>colorquantization() needs now only imgd and options as parameters</li>
+<li>background field is removed from the results of color quantization and </li>
+<li>ESLint passed</li>
+<li>test automation and simple statistics in imagetracer_test_automation.html</li>
+</ul>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">&lt;</span>script src<span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>imagetracer_v1.0.4.js<span class="pl-pds">"</span></span><span class="pl-k">&gt;&lt;</span><span class="pl-k">/</span>script<span class="pl-k">&gt;</span></pre></div>
-
-<p>Then an ImageTracer object must be created:</p>
-
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> it <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">ImageTracer</span>();</pre></div>
+<p><img src="https://raw.githubusercontent.com/jankovicsandras/imagetracerjs/master/newv.png" alt="alt v1.1.0"></p>
 
 <h3>
-<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Examples</h3>
+<a id="using-in-the-browser" class="anchor" href="#using-in-the-browser" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using in the browser</h3>
 
-<h4>
-<a id="example-1" class="anchor" href="#example-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 1</h4>
+<p>Include the script:</p>
 
-<p>Basic usage: loading image, tracing it and creating SVG string, then executing callback with the SVG string as argument: alert(svgstring). This happens asynchronously, when image is loaded (image.onload event).</p>
+<div class="highlight highlight-source-js"><pre><span class="pl-k">&lt;</span>script src<span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>imagetracer_v1.1.0.js<span class="pl-pds">"</span></span><span class="pl-k">&gt;&lt;</span><span class="pl-k">/</span>script<span class="pl-k">&gt;</span></pre></div>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-smi">it</span>.<span class="pl-en">imageToSVG</span>( <span class="pl-s"><span class="pl-pds">'</span>smiley.png<span class="pl-pds">'</span></span>, alert );</pre></div>
+<p>Then</p>
 
-<h4>
-<a id="example-2" class="anchor" href="#example-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 2</h4>
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// Loading smiley.png, tracing and calling alert callback on the SVG string result </span>
+<span class="pl-smi">ImageTracer</span>.<span class="pl-en">imageToSVG</span>( <span class="pl-s"><span class="pl-pds">'</span>smiley.png<span class="pl-pds">'</span></span>, alert );</pre></div>
 
-<p>The same, but appendSVGString() is a simple helper function to display the SVG. Without parameters, it will append the SVG to the end of document.body .</p>
+<p>More examples:</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-smi">it</span>.<span class="pl-en">imageToSVG</span>( <span class="pl-s"><span class="pl-pds">'</span>smiley.png<span class="pl-pds">'</span></span>, <span class="pl-smi">it</span>.<span class="pl-smi">appendSVGString</span> );</pre></div>
+<div class="highlight highlight-source-js"><pre>
+<span class="pl-c">// Almost the same with options, and the ImageTracer.appendSVGString callback will append the SVG</span>
+<span class="pl-smi">ImageTracer</span>.<span class="pl-en">imageToSVG</span>( <span class="pl-s"><span class="pl-pds">'</span>smiley.png<span class="pl-pds">'</span></span>, <span class="pl-smi">ImageTracer</span>.<span class="pl-smi">appendSVGString</span>, { ltres<span class="pl-k">:</span><span class="pl-c1">0.1</span>, qtres<span class="pl-k">:</span><span class="pl-c1">1</span>, scale<span class="pl-k">:</span><span class="pl-c1">10</span> } );
 
-<h4>
-<a id="example-3" class="anchor" href="#example-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 3</h4>
 
-<p>The same, but with an options object. This shows the effects of low linear treshold: more round shapes, low quadratic treshold: more polygonal shapes, and scaling.</p>
-
-<div class="highlight highlight-source-js"><pre><span class="pl-smi">it</span>.<span class="pl-en">imageToSVG</span>( <span class="pl-s"><span class="pl-pds">'</span>smiley.png<span class="pl-pds">'</span></span>, <span class="pl-smi">it</span>.<span class="pl-smi">appendSVGString</span>, { ltres<span class="pl-k">:</span><span class="pl-c1">0.01</span>, qtres<span class="pl-k">:</span><span class="pl-c1">1</span>, scale<span class="pl-k">:</span><span class="pl-c1">10</span> } );
-<span class="pl-smi">it</span>.<span class="pl-en">imageToSVG</span>( <span class="pl-s"><span class="pl-pds">'</span>smiley.png<span class="pl-pds">'</span></span>, <span class="pl-smi">it</span>.<span class="pl-smi">appendSVGString</span>, { ltres<span class="pl-k">:</span><span class="pl-c1">1</span>, qtres<span class="pl-k">:</span><span class="pl-c1">0.01</span>, scale<span class="pl-k">:</span><span class="pl-c1">10</span> } );</pre></div>
-
-<h4>
-<a id="example-4" class="anchor" href="#example-4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 4</h4>
-
-<p>The callback here will append the SVG to a container div with the id 'svgcontainer', creating the div if it does not exist yet. This shows also the effects of the 4 color palette.</p>
-
-<div class="highlight highlight-source-js"><pre><span class="pl-smi">it</span>.<span class="pl-en">imageToSVG</span>(
+<span class="pl-c">// This appends the SVG to an element with id="svgcontainer"</span>
+<span class="pl-smi">ImageTracer</span>.<span class="pl-en">imageToSVG</span>(
     <span class="pl-s"><span class="pl-pds">'</span>panda.png<span class="pl-pds">'</span></span>,
-    <span class="pl-k">function</span>(<span class="pl-smi">svgstr</span>){ <span class="pl-smi">it</span>.<span class="pl-en">appendSVGString</span>( svgstr, <span class="pl-s"><span class="pl-pds">'</span>svgcontainer<span class="pl-pds">'</span></span> ); },
+    <span class="pl-k">function</span>(<span class="pl-smi">svgstr</span>){ <span class="pl-smi">ImageTracer</span>.<span class="pl-en">appendSVGString</span>( svgstr, <span class="pl-s"><span class="pl-pds">'</span>svgcontainer<span class="pl-pds">'</span></span> ); },
     { numberofcolors<span class="pl-k">:</span><span class="pl-c1">4</span> }
-);</pre></div>
+);
 
-<p>The helper function loadImage() loads an image to a canvas, then executing callback: appending the canvas to a div here.</p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-smi">it</span>.<span class="pl-en">loadImage</span>(
+<span class="pl-c">// The helper function loadImage() loads an image to a canvas, then executing callback: appending the canvas to a div here.</span>
+<span class="pl-smi">ImageTracer</span>.<span class="pl-en">loadImage</span>(
     <span class="pl-s"><span class="pl-pds">'</span>panda.png<span class="pl-pds">'</span></span>,
     <span class="pl-k">function</span>(<span class="pl-smi">canvas</span>){ (<span class="pl-c1">document</span>.<span class="pl-c1">getElementById</span>(<span class="pl-s"><span class="pl-pds">'</span>canvascontainer<span class="pl-pds">'</span></span>)).<span class="pl-c1">appendChild</span>(canvas); }
-);</pre></div>
+);
 
-<h4>
-<a id="example-5" class="anchor" href="#example-5" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 5</h4>
 
-<p>Tracing ImageData to an SVG string synchronously. Run Example 4 before this. Getting ImageData from canvas with the helper function getImgdata().</p>
+<span class="pl-c">// ImageData can be traced to an SVG string synchronously.</span>
+<span class="pl-smi">ImageTracer</span>.<span class="pl-en">loadImage</span>(
+    <span class="pl-s"><span class="pl-pds">'</span>smiley.png<span class="pl-pds">'</span></span>,
+    <span class="pl-k">function</span>(<span class="pl-smi">canvas</span>){
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> canvas <span class="pl-k">=</span> (<span class="pl-c1">document</span>.<span class="pl-c1">getElementById</span>(<span class="pl-s"><span class="pl-pds">'</span>canvascontainer<span class="pl-pds">'</span></span>)).<span class="pl-c1">firstChild</span>;
-<span class="pl-k">var</span> imgd <span class="pl-k">=</span> <span class="pl-smi">it</span>.<span class="pl-en">getImgdata</span>( canvas );</pre></div>
+        <span class="pl-c">// Getting ImageData from canvas with the helper function getImgdata().</span>
+        <span class="pl-k">var</span> imgd <span class="pl-k">=</span> <span class="pl-smi">ImageTracer</span>.<span class="pl-en">getImgdata</span>( canvas );
 
-<p>Tracing to an SVG string with more colors and probably better color quantization.</p>
+        <span class="pl-c">// Synchronous tracing to SVG string</span>
+        <span class="pl-k">var</span> svgstr <span class="pl-k">=</span> <span class="pl-smi">ImageTracer</span>.<span class="pl-en">imagedataToSVG</span>( imgd, { scale<span class="pl-k">:</span><span class="pl-c1">5</span> } );
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> svgstr <span class="pl-k">=</span> <span class="pl-smi">it</span>.<span class="pl-en">imagedataToSVG</span>( imgd, { numberofcolors<span class="pl-k">:</span><span class="pl-c1">16</span>, colorquantcycles<span class="pl-k">:</span><span class="pl-c1">5</span> } );</pre></div>
+        <span class="pl-c">// Appending SVG</span>
+        <span class="pl-smi">ImageTracer</span>.<span class="pl-en">appendSVGString</span>( svgstr, <span class="pl-s"><span class="pl-pds">'</span>svgcontainer<span class="pl-pds">'</span></span> );
 
-<p>Appending SVG</p>
+    }
+);
 
-<div class="highlight highlight-source-js"><pre><span class="pl-smi">it</span>.<span class="pl-en">appendSVGString</span>( svgstr, <span class="pl-s"><span class="pl-pds">'</span>svgcontainer<span class="pl-pds">'</span></span> );</pre></div>
 
-<h4>
-<a id="example-6" class="anchor" href="#example-6" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 6</h4>
-
-<p>This will load an image, trace it when loaded, and execute callback on the tracedata: stringifying and alerting it here.</p>
-
-<div class="highlight highlight-source-js"><pre><span class="pl-smi">it</span>.<span class="pl-en">imageToTracedata</span>(
+<span class="pl-c">// This will load an image, trace it when loaded, and execute callback on the tracedata: stringifying and alerting it here.</span>
+<span class="pl-smi">ImageTracer</span>.<span class="pl-en">imageToTracedata</span>(
     <span class="pl-s"><span class="pl-pds">'</span>smiley.png<span class="pl-pds">'</span></span>,
     <span class="pl-k">function</span>(<span class="pl-smi">tracedata</span>){ <span class="pl-en">alert</span>( <span class="pl-c1">JSON</span>.<span class="pl-en">stringify</span>( tracedata ) ); },
-    { ltres<span class="pl-k">:</span><span class="pl-c1">0.01</span>, qtres<span class="pl-k">:</span><span class="pl-c1">1</span>, scale<span class="pl-k">:</span><span class="pl-c1">10</span> }
-);</pre></div>
+    { ltres<span class="pl-k">:</span><span class="pl-c1">0.1</span>, qtres<span class="pl-k">:</span><span class="pl-c1">1</span>, scale<span class="pl-k">:</span><span class="pl-c1">10</span> }
+);
 
-<p>Read imagetracerjs_documentation.html or the source for details on the returned tracedata object.</p>
 
-<h4>
-<a id="example-7" class="anchor" href="#example-7" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example 7</h4>
-
-<p>imagedataToTracedata() is very similar to the previous functions. This returns tracedata synchronously.</p>
-
-<div class="highlight highlight-source-js"><pre><span class="pl-smi">it</span>.<span class="pl-en">loadImage</span>(
+<span class="pl-c">// imagedataToTracedata() is very similar to the previous functions. This returns tracedata synchronously.</span>
+<span class="pl-smi">ImageTracer</span>.<span class="pl-en">loadImage</span>(
         <span class="pl-s"><span class="pl-pds">'</span>smiley.png<span class="pl-pds">'</span></span>,
         <span class="pl-k">function</span>(<span class="pl-smi">canvas</span>){ 
-            <span class="pl-k">var</span> imgd <span class="pl-k">=</span> <span class="pl-smi">it</span>.<span class="pl-en">getImgdata</span>(canvas);
 
-            <span class="pl-k">var</span> tracedata <span class="pl-k">=</span> <span class="pl-smi">it</span>.<span class="pl-en">imagedataToTracedata</span>( imgd, { ltres<span class="pl-k">:</span><span class="pl-c1">1</span>, qtres<span class="pl-k">:</span><span class="pl-c1">0.01</span>, scale<span class="pl-k">:</span><span class="pl-c1">10</span> } );
+            <span class="pl-c">// Getting ImageData from canvas with the helper function getImgdata().</span>
+            <span class="pl-k">var</span> imgd <span class="pl-k">=</span> <span class="pl-smi">ImageTracer</span>.<span class="pl-en">getImgdata</span>(canvas);
+
+            <span class="pl-c">// Synchronous tracing to tracedata</span>
+            <span class="pl-k">var</span> tracedata <span class="pl-k">=</span> <span class="pl-smi">ImageTracer</span>.<span class="pl-en">imagedataToTracedata</span>( imgd, { ltres<span class="pl-k">:</span><span class="pl-c1">1</span>, qtres<span class="pl-k">:</span><span class="pl-c1">0.01</span>, scale<span class="pl-k">:</span><span class="pl-c1">10</span> } );
 
             <span class="pl-en">alert</span>( <span class="pl-c1">JSON</span>.<span class="pl-en">stringify</span>( tracedata ) );
         }
 );</pre></div>
+
+<h3>
+<a id="using-with-nodejs" class="anchor" href="#using-with-nodejs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Using with Node.js</h3>
+
+<p>See nodetest folder. Example:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-s"><span class="pl-pds">"</span>use strict<span class="pl-pds">"</span></span>;
+
+<span class="pl-k">var</span> fs <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>fs<span class="pl-pds">"</span></span>);
+
+<span class="pl-k">var</span> ImageTracer <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-c1">__dirname</span> <span class="pl-k">+</span><span class="pl-s"><span class="pl-pds">'</span>/../imagetracer_v1.1.0<span class="pl-pds">'</span></span>);
+
+<span class="pl-c">// This example uses https://github.com/arian/pngjs </span>
+<span class="pl-c">// , but other libraries can be used to load an image file to an ImageData object.</span>
+<span class="pl-k">var</span> PNGReader <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-c1">__dirname</span> <span class="pl-k">+</span><span class="pl-s"><span class="pl-pds">'</span>/PNGReader<span class="pl-pds">'</span></span>);
+
+<span class="pl-k">var</span> file <span class="pl-k">=</span> <span class="pl-c1">__dirname</span> <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span>/../testimages/1.png<span class="pl-pds">"</span></span>;
+
+<span class="pl-smi">fs</span>.<span class="pl-en">readFile</span>(file, <span class="pl-k">function</span>(<span class="pl-smi">err</span>, <span class="pl-smi">bytes</span>){
+    <span class="pl-k">if</span> (err) <span class="pl-k">throw</span> err;
+
+    <span class="pl-k">var</span> reader <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">PNGReader</span>(bytes);
+
+    <span class="pl-smi">reader</span>.<span class="pl-c1">parse</span>(<span class="pl-k">function</span>(<span class="pl-smi">err</span>, <span class="pl-smi">png</span>){
+        <span class="pl-k">if</span> (err) <span class="pl-k">throw</span> err;
+
+        <span class="pl-c">// creating an ImageData object</span>
+        <span class="pl-k">var</span> myImageData <span class="pl-k">=</span> { <span class="pl-s"><span class="pl-pds">'</span>width<span class="pl-pds">'</span></span><span class="pl-k">:</span><span class="pl-smi">png</span>.<span class="pl-c1">width</span>, <span class="pl-s"><span class="pl-pds">'</span>height<span class="pl-pds">'</span></span><span class="pl-k">:</span><span class="pl-smi">png</span>.<span class="pl-c1">height</span>, <span class="pl-s"><span class="pl-pds">'</span>data<span class="pl-pds">'</span></span><span class="pl-k">:</span><span class="pl-smi">png</span>.<span class="pl-smi">pixels</span> };
+
+        <span class="pl-c">// tracing</span>
+        <span class="pl-k">var</span> options <span class="pl-k">=</span> { <span class="pl-s"><span class="pl-pds">'</span>ltres<span class="pl-pds">'</span></span><span class="pl-k">:</span><span class="pl-c1">0.1</span> }; <span class="pl-c">// optional</span>
+        <span class="pl-k">var</span> svgstring <span class="pl-k">=</span> <span class="pl-smi">ImageTracer</span>.<span class="pl-en">imagedataToSVG</span>( myImageData, options );
+
+        <span class="pl-c">// writing to file</span>
+        <span class="pl-smi">fs</span>.<span class="pl-en">writeFile</span>(<span class="pl-c1">__dirname</span><span class="pl-k">+</span><span class="pl-s"><span class="pl-pds">"</span>/test.svg<span class="pl-pds">"</span></span>, svgstring, <span class="pl-k">function</span>(<span class="pl-smi">err</span>) {
+            <span class="pl-k">if</span> (err) <span class="pl-k">throw</span> err;
+            <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-c1">__dirname</span><span class="pl-k">+</span><span class="pl-s"><span class="pl-pds">"</span>/test.svg was saved!<span class="pl-pds">"</span></span>);
+        });
+
+    });<span class="pl-c">// End of reader.parse()</span>
+
+});<span class="pl-c">// End of fs.readFile()</span>
+</pre></div>
 
 <h3>
 <a id="main-functions" class="anchor" href="#main-functions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Main Functions</h3>
@@ -247,6 +290,16 @@
 <td>Edge node paths shorter than this will be discarded for noise reduction. Use 1 instead of 0 to get paths around single pixels.</td>
 </tr>
 <tr>
+<td>blurradius</td>
+<td>0</td>
+<td>Set this to 1..5 for selective Gaussian blur preprocessing.</td>
+</tr>
+<tr>
+<td>blurdelta</td>
+<td>20</td>
+<td>RGBA delta treshold for selective Gaussian blur preprocessing.</td>
+</tr>
+<tr>
 <td>pal</td>
 <td>No default value</td>
 <td>Custom palette, an array of color objects: <code>[ {r:0,g:0,b:0,a:255}, ... ]</code>
@@ -273,6 +326,21 @@
 <td>Every coordinate will be multiplied with this, to scale the SVG.</td>
 </tr>
 <tr>
+<td>colorsampling</td>
+<td>true</td>
+<td>Enable or disable color sampling.</td>
+</tr>
+<tr>
+<td>viewbox</td>
+<td>false</td>
+<td>Enable or disable SVG viewBox.</td>
+</tr>
+<tr>
+<td>desc</td>
+<td>true</td>
+<td>Enable or disable SVG descriptions.</td>
+</tr>
+<tr>
 <td>lcpr</td>
 <td>0</td>
 <td>Straight line control point radius, if this is greater than zero, small circles will be drawn in the SVG. Do not use this for big/complex images.</td>
@@ -292,7 +360,7 @@
 
 <p>The almost complete options object: </p>
 
-<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> options <span class="pl-k">=</span> { ltres<span class="pl-k">:</span><span class="pl-c1">1</span>, qtres<span class="pl-k">:</span><span class="pl-c1">1</span>, pathomit<span class="pl-k">:</span><span class="pl-c1">8</span>, numberofcolors<span class="pl-k">:</span><span class="pl-c1">16</span>, mincolorratio<span class="pl-k">:</span><span class="pl-c1">0.02</span>, colorquantcycles<span class="pl-k">:</span><span class="pl-c1">3</span>, scale<span class="pl-k">:</span><span class="pl-c1">1</span>, lcpr<span class="pl-k">:</span><span class="pl-c1">0</span>, qcpr<span class="pl-k">:</span><span class="pl-c1">0</span> };</pre></div>
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> options <span class="pl-k">=</span> {<span class="pl-s"><span class="pl-pds">"</span>ltres<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">1</span>,<span class="pl-s"><span class="pl-pds">"</span>qtres<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">1</span>,<span class="pl-s"><span class="pl-pds">"</span>pathomit<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">8</span>,<span class="pl-s"><span class="pl-pds">"</span>colorsampling<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">true</span>,<span class="pl-s"><span class="pl-pds">"</span>numberofcolors<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">16</span>,<span class="pl-s"><span class="pl-pds">"</span>mincolorratio<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">0.02</span>,<span class="pl-s"><span class="pl-pds">"</span>colorquantcycles<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">3</span>,<span class="pl-s"><span class="pl-pds">"</span>scale<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">1</span>,<span class="pl-s"><span class="pl-pds">"</span>simplifytolerance<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">0</span>,<span class="pl-s"><span class="pl-pds">"</span>roundcoords<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">1</span>,<span class="pl-s"><span class="pl-pds">"</span>lcpr<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">0</span>,<span class="pl-s"><span class="pl-pds">"</span>qcpr<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">0</span>,<span class="pl-s"><span class="pl-pds">"</span>desc<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">true</span>,<span class="pl-s"><span class="pl-pds">"</span>viewbox<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">false</span>,<span class="pl-s"><span class="pl-pds">"</span>blurradius<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">0</span>,<span class="pl-s"><span class="pl-pds">"</span>blurdelta<span class="pl-pds">"</span></span><span class="pl-k">:</span><span class="pl-c1">20</span>};</pre></div>
 
 <p>Adding custom palette. This will override numberofcolors.</p>
 
@@ -301,76 +369,7 @@
 <h3>
 <a id="process-overview" class="anchor" href="#process-overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Process overview</h3>
 
-<h4>
-<a id="1-color-quantization" class="anchor" href="#1-color-quantization" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. Color quantization</h4>
-
-<p>The <strong>colorquantization</strong> function creates an indexed image (<a href="https://en.wikipedia.org/wiki/Indexed_color">https://en.wikipedia.org/wiki/Indexed_color</a>)</p>
-
-<p><img src="s2.png" alt="alt Original image (20x scale)"></p>
-
-<h4>
-<a id="2-layer-separation-and-edge-detection" class="anchor" href="#2-layer-separation-and-edge-detection" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. Layer separation and edge detection</h4>
-
-<p>The <strong>layering</strong> function creates arrays for every color, and calculates edge node types. These are at the center of every 4 pixels, shown here as dots.</p>
-
-<p><img src="s3.png" alt="alt layer 0: black">
-<img src="s4.png" alt="alt layer 1: yellow">
-<img src="s7.png" alt="alt edge node examples"></p>
-
-<h4>
-<a id="3-pathscan" class="anchor" href="#3-pathscan" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3. Pathscan</h4>
-
-<p>The <strong>pathscan</strong> function finds chains of edge nodes, example: the cyan dots and lines.</p>
-
-<p><img src="s8.png" alt="alt an edge node path"></p>
-
-<h4>
-<a id="4-interpolation" class="anchor" href="#4-interpolation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>4. Interpolation</h4>
-
-<p>The <strong>internodes</strong> function interpolates the coordinates of the edge node paths. Every line segment in the new path has one of the 8 directions (East, North East, N, NW, W, SW, S, SE).</p>
-
-<p><img src="s9.png" alt="alt interpolating">
-<img src="s10.png" alt="alt interpolation result"></p>
-
-<h4>
-<a id="5-tracing" class="anchor" href="#5-tracing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>5. Tracing</h4>
-
-<p>The <strong>tracepath</strong> function splits the interpolated paths into sequences with two directions.</p>
-
-<p><img src="s11.png" alt="alt a sequence"></p>
-
-<p>The <strong>fitseq</strong> function tries to fit a straight line on the start- and endpoint of the sequence (black line). If the distance error between the calculated points (black line) and actual sequence points (blue dots) is greater than the treshold, the point with the greatest error is selected (red line).</p>
-
-<p><img src="s12.png" alt="alt fitting a straight line"></p>
-
-<p>The <strong>fitseq</strong> function tries to fit a quadratic spline through the error point.</p>
-
-<p><img src="s13.png" alt="alt fitting a quadratic spline">
-<img src="s14.png" alt="alt fitting line segments"> 
-<img src="s15.png" alt="alt result with control points"></p>
-
-<p>If the <strong>fitseq</strong> function can not fit a straight line or a quadratic spline to the sequence with the given error tresholds, then it will split the sequence in two and recursively call <strong>fitseq</strong> on each part.</p>
-
-<h4>
-<a id="6-svg-rendering" class="anchor" href="#6-svg-rendering" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>6. SVG rendering</h4>
-
-<p>The coordinates are rendered to <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths">SVG Paths</a> in the <strong>getsvgstring</strong> function.</p>
-
-<h3>
-<a id="ideas-for-improvement" class="anchor" href="#ideas-for-improvement" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Ideas for improvement</h3>
-
-<ul>
-<li>TODO: Node.js support - Canvas and ImageData is not supported by Node.js by default, but <a href="https://www.npmjs.com/package/canvas">canvas</a> or other packages might solve this.</li>
-<li>Error handling: there's very little error handling now, Out of memory can happen easily with big images or many layers.</li>
-<li>Color quantization: other algorithms?</li>
-<li>Color quantization: colors with few pixels are randomized, but probably the most distant colors should be found instead.</li>
-<li>Tracing: 5.1. finding more suitable sequences.</li>
-<li>Tracing: 5.5. Set splitpoint = (fitting point + errorpoint)/2 ; this is just a guess, there might be a better splitpoint.</li>
-<li>Tracing: 5.7. If splitpoint-endpoint is a spline, try to add new points from the next sequence; this is not implemented.</li>
-<li>Tracing: cubic splines or other curves?</li>
-<li>Default values: they are chosen because they seemed OK, not based on calculations.</li>
-<li>Output: <a href="https://en.wikipedia.org/wiki/Portable_Document_Format">PDF</a>, <a href="https://en.wikipedia.org/wiki/AutoCAD_DXF">DXF</a>,   <a href="https://en.wikipedia.org/wiki/G-code">G-code</a> or other output?</li>
-</ul>
+<p>See <a href="https://github.com/jankovicsandras/imagetracerjs/blob/master/process_overview.md">Process overview and Ideas for improvement</a></p>
 
 <h3>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h3>
