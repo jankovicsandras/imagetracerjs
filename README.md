@@ -3,7 +3,7 @@
 
 Simple raster image tracer and vectorizer written in JavaScript.
 
-by András Jankovics 2015
+by András Jankovics 2015, 2016
 
 ### 1.1.0 is here
 
@@ -51,7 +51,8 @@ ImageTracer.imageToSVG(
 );
 
 
-// The helper function loadImage() loads an image to a canvas, then executing callback: appending the canvas to a div here.
+// The helper function loadImage() loads an image to a canvas, then executing callback:
+// appending the canvas to a div here.
 ImageTracer.loadImage(
 	'panda.png',
 	function(canvas){ (document.getElementById('canvascontainer')).appendChild(canvas); }
@@ -76,7 +77,8 @@ ImageTracer.loadImage(
 );
 
 
-// This will load an image, trace it when loaded, and execute callback on the tracedata: stringifying and alerting it here.
+// This will load an image, trace it when loaded, and execute callback on the tracedata:
+// stringifying and alerting it here.
 ImageTracer.imageToTracedata(
 	'smiley.png',
 	function(tracedata){ alert( JSON.stringify( tracedata ) ); },
@@ -163,9 +165,9 @@ There are more functions for advanced users, read the source if you are interest
 ### Options
 |Option name|Default value|Meaning|
 |-----------|-------------|-------|
-|ltres|1|Error treshold for straight lines. Use 0.001 instead of 0 if only round splines are required.|
-|qtres|1|Error treshold for quadratic splines. Use 0.001 instead of 0 if only straight lines are required.|
-|pathomit|8|Edge node paths shorter than this will be discarded for noise reduction. Use 1 instead of 0 to get paths around single pixels.|
+|ltres|1|Error treshold for straight lines.|
+|qtres|1|Error treshold for quadratic splines.|
+|pathomit|8|Edge node paths shorter than this will be discarded for noise reduction.|
 |blurradius|0|Set this to 1..5 for selective Gaussian blur preprocessing.|
 |blurdelta|20|RGBA delta treshold for selective Gaussian blur preprocessing.|
 |pal|No default value|Custom palette, an array of color objects: ```[ {r:0,g:0,b:0,a:255}, ... ]```|
