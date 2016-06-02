@@ -3,7 +3,7 @@
 
 Simple raster image tracer and vectorizer written in JavaScript.
 
-by András Jankovics 2015
+by András Jankovics 2015, 2016
 
 ### 1.1.1
 
@@ -53,7 +53,8 @@ ImageTracer.imageToSVG(
 );
 
 
-// The helper function loadImage() loads an image to a canvas, then executing callback: appending the canvas to a div here.
+// The helper function loadImage() loads an image to a canvas, then executing callback:
+// appending the canvas to a div here.
 ImageTracer.loadImage(
 	'panda.png',
 	function(canvas){ (document.getElementById('canvascontainer')).appendChild(canvas); }
@@ -78,7 +79,8 @@ ImageTracer.loadImage(
 );
 
 
-// This will load an image, trace it when loaded, and execute callback on the tracedata: stringifying and alerting it here.
+// This will load an image, trace it when loaded, and execute callback on the tracedata:
+// stringifying and alerting it here.
 ImageTracer.imageToTracedata(
 	'smiley.png',
 	function(tracedata){ alert( JSON.stringify( tracedata ) ); },
@@ -165,19 +167,19 @@ There are more functions for advanced users, read the source if you are interest
 ### Options
 |Option name|Default value|Meaning|
 |-----------|-------------|-------|
-|ltres|1|Error treshold for straight lines. Use 0.001 instead of 0 if only round splines are required.|
-|qtres|1|Error treshold for quadratic splines. Use 0.001 instead of 0 if only straight lines are required.|
-|pathomit|8|Edge node paths shorter than this will be discarded for noise reduction. Use 1 instead of 0 to get paths around single pixels.|
-|options.blurradius|0|Set this to 1..5 for selective Gaussian blur preprocessing.|
-|options.blurdelta|20|RGBA delta treshold for selective Gaussian blur preprocessing.|
+|ltres|1|Error treshold for straight lines.|
+|qtres|1|Error treshold for quadratic splines.|
+|pathomit|8|Edge node paths shorter than this will be discarded for noise reduction.|
+|blurradius|0|Set this to 1..5 for selective Gaussian blur preprocessing.|
+|blurdelta|20|RGBA delta treshold for selective Gaussian blur preprocessing.|
 |pal|No default value|Custom palette, an array of color objects: ```[ {r:0,g:0,b:0,a:255}, ... ]```|
 |numberofcolors|16|Number of colors to use on palette if pal object is not defined.|
 |mincolorratio|0.02|Color quantization will randomize a color if fewer pixels than (total pixels*mincolorratio) has it.|
 |colorquantcycles|3|Color quantization will be repeated this many times.|
 |scale|1|Every coordinate will be multiplied with this, to scale the SVG.|
-|options.colorsampling|true|Enable or disable color sampling.|
-|options.viewbox|false|Enable or disable SVG viewBox.|
-|options.desc|true|Enable or disable SVG descriptions.|
+|colorsampling|true|Enable or disable color sampling.|
+|viewbox|false|Enable or disable SVG viewBox.|
+|desc|true|Enable or disable SVG descriptions.|
 |lcpr|0|Straight line control point radius, if this is greater than zero, small circles will be drawn in the SVG. Do not use this for big/complex images.|
 |qcpr|0|Quadratic spline control point radius, if this is greater than zero, small circles and lines will be drawn in the SVG. Do not use this for big/complex images.|
 |layercontainerid|No default value|Edge node layers can be visualized if a container div's id is defined.|
@@ -192,7 +194,7 @@ options.pal = [{r:0,g:0,b:0,a:255}, {r:0,g:0,b:255,a:255}, {r:255,g:255,b:0,a:25
 ```
 
 ### Process overview
-See this for Process overview and Ideas for improvement
+See [Process overview and Ideas for improvement](https://github.com/jankovicsandras/imagetracerjs/blob/master/process_overview.md)
 
 ### License
 #### The Unlicense / PUBLIC DOMAIN
