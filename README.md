@@ -31,7 +31,7 @@ by András Jankovics 2015, 2016
 ### Using in the browser
 Include the script:
 ```javascript
-<script src="imagetracer_v1.1.0.js"></script>
+<script src="imagetracer_v1.1.1.js"></script>
 ```
 Then
 ```javascript
@@ -111,7 +111,7 @@ See nodetest folder. Example:
 
 var fs = require("fs");
 
-var ImageTracer = require(__dirname +'/../imagetracer_v1.1.0');
+var ImageTracer = require(__dirname +'/../imagetracer_v1.1.1');
 
 // This example uses https://github.com/arian/pngjs 
 // , but other libraries can be used to load an image file to an ImageData object.
