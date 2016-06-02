@@ -1,11 +1,15 @@
 # imagetracerjs
-![alt Bitmap to Svg](s1.png)
+![alt Bitmap to Svg](docimages/s1.png)
 
 Simple raster image tracer and vectorizer written in JavaScript.
 
 by András Jankovics 2015
 
-### 1.1.0 is here
+### 1.1.1
+
+- Bugfix: CSS3 RGBA output in SVG was technically incorrect (however supported by major browsers), so this is changed. [More info](https://stackoverflow.com/questions/6042550/svg-fill-color-transparency-alpha)
+
+### 1.1.0
 
 - it works with Node.js (external library required to load image into an ImageData object)
 - export as AMD module / Node module / browser or worker variable
@@ -23,8 +27,6 @@ by András Jankovics 2015
 - background field is removed from the results of color quantization and 
 - ESLint passed
 - test automation and simple statistics in imagetracer_test_automation.html
-
-![alt v1.1.0](newv.png)
 
 ### Using in the browser
 Include the script:

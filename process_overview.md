@@ -2,36 +2,36 @@
 ####1. Color quantization
 The **colorquantization** function creates an indexed image (https://en.wikipedia.org/wiki/Indexed_color)
 
-![alt Original image (20x scale)](s2.png)
+![alt Original image (20x scale)](docimages/s2.png)
 ####2. Layer separation and edge detection
 The **layering** function creates arrays for every color, and calculates edge node types. These are at the center of every 4 pixels, shown here as dots.
 
-![alt layer 0: black](s3.png)
-![alt layer 1: yellow](s4.png)
-![alt edge node examples](s7.png)
+![alt layer 0: black](docimages/s3.png)
+![alt layer 1: yellow](docimages/s4.png)
+![alt edge node examples](docimages/s7.png)
 ####3. Pathscan
 The **pathscan** function finds chains of edge nodes, example: the cyan dots and lines.
 
-![alt an edge node path](s8.png)
+![alt an edge node path](docimages/s8.png)
 ####4. Interpolation
 The **internodes** function interpolates the coordinates of the edge node paths. Every line segment in the new path has one of the 8 directions (East, North East, N, NW, W, SW, S, SE).
 
-![alt interpolating](s9.png)
-![alt interpolation result](s10.png)
+![alt interpolating](docimages/s9.png)
+![alt interpolation result](docimages/s10.png)
 ####5. Tracing
 The **tracepath** function splits the interpolated paths into sequences with two directions.
 
-![alt a sequence](s11.png)
+![alt a sequence](docimages/s11.png)
 
 The **fitseq** function tries to fit a straight line on the start- and endpoint of the sequence (black line). If the distance error between the calculated points (black line) and actual sequence points (blue dots) is greater than the treshold, the point with the greatest error is selected (red line).
 
-![alt fitting a straight line](s12.png)
+![alt fitting a straight line](docimages/s12.png)
 
 The **fitseq** function tries to fit a quadratic spline through the error point.
 
-![alt fitting a quadratic spline](s13.png)
-![alt fitting line segments](s14.png) 
-![alt result with control points](s15.png)
+![alt fitting a quadratic spline](docimages/s13.png)
+![alt fitting line segments](docimages/s14.png) 
+![alt result with control points](docimages/s15.png)
 
 If the **fitseq** function can not fit a straight line or a quadratic spline to the sequence with the given error tresholds, then it will split the sequence in two and recursively call **fitseq** on each part.
 ####6. SVG rendering

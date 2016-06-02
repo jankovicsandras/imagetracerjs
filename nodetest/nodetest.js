@@ -2,7 +2,7 @@
 
 var fs = require("fs");
 
-var ImageTracer = require(__dirname +'/../imagetracer_v1.1.0');
+var ImageTracer = require(__dirname +'/../imagetracer_v1.1.1');
 
 // This example uses https://github.com/arian/pngjs 
 // , but other libraries can be used to load an image file to an ImageData object.
