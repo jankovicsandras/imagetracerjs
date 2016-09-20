@@ -5,6 +5,11 @@ Simple raster image tracer and vectorizer written in JavaScript.
 
 by András Jankovics 2015, 2016
 
+### 1.1.2
+
+- minor bugfixes
+- lookup based ```pathscan()```
+
 ### 1.1.1
 
 - Bugfix: CSS3 RGBA output in SVG was technically incorrect (however supported by major browsers), so this is changed. [More info](https://stackoverflow.com/questions/6042550/svg-fill-color-transparency-alpha)
@@ -13,25 +18,25 @@ by András Jankovics 2015, 2016
 
 - it works with Node.js (external library required to load image into an ImageData object)
 - export as AMD module / Node module / browser or worker variable
-- new syntax: ImageTracer.imageToTracedata(), no need to initialize
-- fixed options with hasOwnProperty: 0 values are not replaced with defaults, fixed polygons with coordinates x=0 or y=0
+- new syntax: ```ImageTracer.imageToTracedata()```, no need to initialize
+- fixed ```options``` with hasOwnProperty: 0 values are not replaced with defaults, fixed polygons with coordinates x=0 or y=0
 - transparency support: alpha is not discarded now, it is given more weight in color quantization
-- new options.roundcoords : rounding coordinates to a given decimal place. This can reduce SVG length significantly (>20%) with minor loss of precision.
-- new options.desc : setting this to false will turn off path descriptions, reducing SVG length.
-- new options.viewbox : setting this to true will use viewBox instead of exact width and height
-- new options.colorsampling : color quantization will sample the colors now by default, can be turned off.
-- new options.blurradius : setting this to 1..5 will preprocess the image with a selective Gaussian blur with options.blurdelta treshold. This can filter noise and improve quality.
-- imagedataToTracedata() returns image width and height in tracedata
-- getsvgstring() needs now only tracedata and options as parameters
-- colorquantization() needs now only imgd and options as parameters
-- background field is removed from the results of color quantization and 
+- new ```options.roundcoords``` : rounding coordinates to a given decimal place. This can reduce SVG length significantly (>20%) with minor loss of precision.
+- new ```options.desc``` : setting this to false will turn off path descriptions, reducing SVG length.
+- new ```options.viewbox``` : setting this to true will use viewBox instead of exact width and height
+- new ```options.colorsampling``` : color quantization will sample the colors now by default, can be turned off.
+- new ```options.blurradius``` : setting this to 1..5 will preprocess the image with a selective Gaussian blur with options.blurdelta treshold. This can filter noise and improve quality.
+- ```imagedataToTracedata()``` returns image width and height in tracedata
+- ```getsvgstring()``` needs now only tracedata and options as parameters
+- ```colorquantization()``` needs now only imgd and options as parameters
+- background field is removed from the results of color quantization 
 - ESLint passed
 - test automation and simple statistics in imagetracer_test_automation.html
 
 ### Using in the browser
 Include the script:
 ```javascript
-<script src="imagetracer_v1.1.1.js"></script>
+<script src="imagetracer_v1.1.2.js"></script>
 ```
 Then
 ```javascript
@@ -111,7 +116,7 @@ See nodetest folder. Example:
 
 var fs = require("fs");
 
-var ImageTracer = require(__dirname +'/../imagetracer_v1.1.1');
+var ImageTracer = require(__dirname +'/../imagetracer_v1.1.2');
 
 // This example uses https://github.com/arian/pngjs 
 // , but other libraries can be used to load an image file to an ImageData object.
@@ -146,43 +151,47 @@ fs.readFile(file, function(err, bytes){
 
 ```
 
+### Deterministic output
+See [choices for deterministic tracing](https://github.com/jankovicsandras/imagetracerjs/blob/master/deterministic.md)
+
 ### Main Functions
 |Function name|Arguments|Returns|Run type|
 |-------------|---------|-------|--------|
-|imageToSVG|image_url /*string*/ , callback /*function*/ , options /*optional object*/|Nothing, callback(svgstring) will be executed|Asynchronous|
-|imagedataToSVG|[ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) /*object*/ , options /*optional object*/|svgstring /*string*/|Synchronous|
-|imageToTracedata|image_url /*string*/ , callback /*function*/ , options /*optional object*/|Nothing, callback(tracedata) will be executed|Asynchronous|
-|imagedataToTracedata|[ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) /*object*/ , options /*optional object*/|tracedata /*object*/|Synchronous|
+|```imageToSVG```|```image_url /*string*/ , callback /*function*/ , options /*optional object*/```|Nothing, callback(svgstring) will be executed|Asynchronous|
+|```imagedataToSVG```|```[ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) /*object*/ , options /*optional object*/```|```svgstring /*string*/```|Synchronous|
+|```imageToTracedata```|```image_url /*string*/ , callback /*function*/ , options /*optional object*/```|Nothing, callback(tracedata) will be executed|Asynchronous|
+|```imagedataToTracedata```|```[ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) /*object*/ , options /*optional object*/```|```tracedata /*object*/```|Synchronous|
 
 	
 #### Helper Functions
 |Function name|Arguments|Returns|Run type|
 |-------------|---------|-------|--------|
-|appendSVGString|svgstring /*string*/, parentid /*string*/|Nothing, an SVG will be appended to the container div with id=parentid.|Synchronous|
-|loadImage|url /*string*/, callback /*function*/|Nothing, loading an image from a URL, then executing callback(canvas)|Asynchronous|
-|getImgdata|[canvas](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas) /*object*/|[ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) /*object*/|Synchronous|
+|```appendSVGString```|```svgstring /*string*/, parentid /*string*/```|Nothing, an SVG will be appended to the container div with id=parentid.|Synchronous|
+|```loadImage```|```url /*string*/, callback /*function*/```|Nothing, loading an image from a URL, then executing callback(canvas)|Asynchronous|
+|```getImgdata```|```[canvas](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas) /*object*/```|```[ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) /*object*/```|Synchronous|
 
 There are more functions for advanced users, read the source if you are interested. :)
 	
 ### Options
 |Option name|Default value|Meaning|
 |-----------|-------------|-------|
-|ltres|1|Error treshold for straight lines.|
-|qtres|1|Error treshold for quadratic splines.|
-|pathomit|8|Edge node paths shorter than this will be discarded for noise reduction.|
-|blurradius|0|Set this to 1..5 for selective Gaussian blur preprocessing.|
-|blurdelta|20|RGBA delta treshold for selective Gaussian blur preprocessing.|
-|pal|No default value|Custom palette, an array of color objects: ```[ {r:0,g:0,b:0,a:255}, ... ]```|
-|numberofcolors|16|Number of colors to use on palette if pal object is not defined.|
-|mincolorratio|0.02|Color quantization will randomize a color if fewer pixels than (total pixels*mincolorratio) has it.|
-|colorquantcycles|3|Color quantization will be repeated this many times.|
-|scale|1|Every coordinate will be multiplied with this, to scale the SVG.|
-|colorsampling|true|Enable or disable color sampling.|
-|viewbox|false|Enable or disable SVG viewBox.|
-|desc|true|Enable or disable SVG descriptions.|
-|lcpr|0|Straight line control point radius, if this is greater than zero, small circles will be drawn in the SVG. Do not use this for big/complex images.|
-|qcpr|0|Quadratic spline control point radius, if this is greater than zero, small circles and lines will be drawn in the SVG. Do not use this for big/complex images.|
-|layercontainerid|No default value|Edge node layers can be visualized if a container div's id is defined.|
+|```ltres```|```1```|Error treshold for straight lines.|
+|```qtres```|```1```|Error treshold for quadratic splines.|
+|```pathomit```|```8```|Edge node paths shorter than this will be discarded for noise reduction.|
+|```pal```|No default value|Custom palette, an array of color objects: ```[ {r:0,g:0,b:0,a:255}, ... ]```|
+|```colorsampling```|```true```|Enable or disable color sampling.|
+|```numberofcolors```|```16```|Number of colors to use on palette if pal object is not defined.|
+|```mincolorratio```|```0.02```|Color quantization will randomize a color if fewer pixels than (total pixels*mincolorratio) has it.|
+|```colorquantcycles```|```3```|Color quantization will be repeated this many times.|
+|```blurradius```|```0```|Set this to 1..5 for selective Gaussian blur preprocessing.|
+|```blurdelta```|```20```|RGBA delta treshold for selective Gaussian blur preprocessing.|
+|```scale```|```1```|Every coordinate will be multiplied with this, to scale the SVG.|
+|```roundcoords```|```1```|rounding coordinates to a given decimal place. 1 means rounded to 1 decimal place like 7.3 ; 3 means rounded to 3 places, like 7.356|
+|```viewbox```|```false```|Enable or disable SVG viewBox.|
+|```desc```|```true```|Enable or disable SVG descriptions.|
+|```lcpr```|```0```|Straight line control point radius, if this is greater than zero, small circles will be drawn in the SVG. Do not use this for big/complex images.|
+|```qcpr```|```0```|Quadratic spline control point radius, if this is greater than zero, small circles and lines will be drawn in the SVG. Do not use this for big/complex images.|
+|```layercontainerid```|No default value|Edge node layers can be visualized if a container div's id is defined.|
 
 The almost complete options object:	
 ```javascript

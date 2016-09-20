@@ -41,7 +41,7 @@ For more information, please refer to http://unlicense.org/
 function ImageTracer(){
 	var _this = this;
 
-	this.versionnumber = '1.1.0',
+	this.versionnumber = '1.1.2',
 	
 	////////////////////////////////////////////////////////////
 	//
@@ -329,14 +329,14 @@ function ImageTracer(){
 				val = ii.array[j][i];
 				
 				// Are neighbor pixel colors the same?
-				if((j>0)    && (i>0))   { n1 = ii.array[j-1][i-1]===val?1:0; }else{ n1 = 0; }
-				if (j>0)                { n2 = ii.array[j-1][i  ]===val?1:0; }else{ n2 = 0; }
-				if((j>0)    && (i<aw-1)){ n3 = ii.array[j-1][i+1]===val?1:0; }else{ n3 = 0; }
-				if (i>0)                { n4 = ii.array[j  ][i-1]===val?1:0; }else{ n4 = 0; }
-				if (i<aw-1)             { n5 = ii.array[j  ][i+1]===val?1:0; }else{ n5 = 0; }
-				if((j<ah-1) && (i>0) )  { n6 = ii.array[j+1][i-1]===val?1:0; }else{ n6 = 0; }
-				if (j<ah-1)             { n7 = ii.array[j+1][i  ]===val?1:0; }else{ n7 = 0; }
-				if((j<ah-1) && (i<aw-1)){ n8 = ii.array[j+1][i+1]===val?1:0; }else{ n8 = 0; }
+				n1 = ii.array[j-1][i-1]===val ? 1 : 0;
+				n2 = ii.array[j-1][i  ]===val ? 1 : 0;
+				n3 = ii.array[j-1][i+1]===val ? 1 : 0;
+				n4 = ii.array[j  ][i-1]===val ? 1 : 0;
+				n5 = ii.array[j  ][i+1]===val ? 1 : 0;
+				n6 = ii.array[j+1][i-1]===val ? 1 : 0;
+				n7 = ii.array[j+1][i  ]===val ? 1 : 0;
+				n8 = ii.array[j+1][i+1]===val ? 1 : 0;
 				
 				// this pixel's type and looking back on previous pixels
 				layers[val][j+1][i+1] = 1 + n5 * 2 + n8 * 4 + n7 * 8 ;
@@ -350,182 +350,70 @@ function ImageTracer(){
 		return layers;
 	},// End of layering()
 	
+	// Lookup tables for pathscan
+	this.pathscan_dir_lookup = [0,0,3,0, 1,0,3,0, 0,3,3,1, 0,3,0,0], 
+	this.pathscan_holepath_lookup = [false,false,false,false, false,false,false,true, false,false,false,true, false,true,true,false ],
+	// pathscan_combined_lookup[ arr[py][px] ][ dir ] = [nextarrpypx, nextdir, deltapx, deltapy];
+	this.pathscan_combined_lookup = [
+		[[-1,-1,-1,-1], [-1,-1,-1,-1], [-1,-1,-1,-1], [-1,-1,-1,-1]],// arr[py][px]===0 is invalid
+		[[ 0, 1, 0,-1], [-1,-1,-1,-1], [-1,-1,-1,-1], [ 0, 2,-1, 0]],
+		[[-1,-1,-1,-1], [-1,-1,-1,-1], [ 0, 1, 0,-1], [ 0, 0, 1, 0]],
+		[[ 0, 0, 1, 0], [-1,-1,-1,-1], [ 0, 2,-1, 0], [-1,-1,-1,-1]],
+		
+		[[-1,-1,-1,-1], [ 0, 0, 1, 0], [ 0, 3, 0, 1], [-1,-1,-1,-1]],
+		[[13, 3, 0, 1], [13, 2,-1, 0], [ 7, 1, 0,-1], [ 7, 0, 1, 0]],
+		[[-1,-1,-1,-1], [ 0, 1, 0,-1], [-1,-1,-1,-1], [ 0, 3, 0, 1]],
+		[[ 0, 3, 0, 1], [ 0, 2,-1, 0], [-1,-1,-1,-1], [-1,-1,-1,-1]],
+		
+		[[ 0, 3, 0, 1], [ 0, 2,-1, 0], [-1,-1,-1,-1], [-1,-1,-1,-1]],
+		[[-1,-1,-1,-1], [ 0, 1, 0,-1], [-1,-1,-1,-1], [ 0, 3, 0, 1]],
+		[[11, 1, 0,-1], [14, 0, 1, 0], [14, 3, 0, 1], [11, 2,-1, 0]],
+		[[-1,-1,-1,-1], [ 0, 0, 1, 0], [ 0, 3, 0, 1], [-1,-1,-1,-1]],
+		
+		[[ 0, 0, 1, 0], [-1,-1,-1,-1], [ 0, 2,-1, 0], [-1,-1,-1,-1]],
+		[[-1,-1,-1,-1], [-1,-1,-1,-1], [ 0, 1, 0,-1], [ 0, 0, 1, 0]],
+		[[ 0, 1, 0,-1], [-1,-1,-1,-1], [-1,-1,-1,-1], [ 0, 2,-1, 0]],
+		[[-1,-1,-1,-1], [-1,-1,-1,-1], [-1,-1,-1,-1], [-1,-1,-1,-1]]// arr[py][px]===15 is invalid
+	],
+
 	// 3. Walking through an edge node array, discarding edge node types 0 and 15 and creating paths from the rest.
 	// Walk directions (dir): 0 > ; 1 ^ ; 2 < ; 3 v  
 	this.pathscan = function(arr, pathomit){
 		pathomit=pathomit||8;
 		var paths=[],pacnt=0,pcnt=0,px=0,py=0,w=arr[0].length,h=arr.length,
-		dir=0,pathfinished=true,holepath=false;
+		dir=0,pathfinished=true,holepath=false,lookuprow;
 		
 		for(var j=0;j<h;j++){
 			for(var i=0;i<w;i++){
 				if((arr[j][i]!==0)&&(arr[j][i]!==15)){
+					
 					// Init
 					px = i; py = j;
 					paths[pacnt] = [];
 					pathfinished = false;
 					pcnt=0;
+					
 					// fill paths will be drawn, but hole paths are also required to remove unnecessary edge nodes
-					if(arr[py][px]===1){dir = 0;}
-					if(arr[py][px]===2){dir = 3;}
-					if(arr[py][px]===3){dir = 0;}
-					if(arr[py][px]===4){dir = 1; holepath=false; }
-					if(arr[py][px]===5){dir = 0;}
-					if(arr[py][px]===6){dir = 3;}
-					if(arr[py][px]===7){dir = 0; holepath=true; }
-					if(arr[py][px]===8){dir = 0;}
-					if(arr[py][px]===9){dir = 3;}
-					if(arr[py][px]===10){dir = 3;}
-					if(arr[py][px]===11){dir = 1; holepath=true; }
-					if(arr[py][px]===12){dir = 0;}
-					if(arr[py][px]===13){dir = 3; holepath=true; }
-					if(arr[py][px]===14){dir = 0; holepath=true; }
+					dir = _this.pathscan_dir_lookup[ arr[py][px] ]; holepath = _this.pathscan_holepath_lookup[ arr[py][px] ];
+
 					// Path points loop
 					while(!pathfinished){
+						
 						// New path point
 						paths[pacnt][pcnt] = {};
 						paths[pacnt][pcnt].x = px-1;
 						paths[pacnt][pcnt].y = py-1;
 						paths[pacnt][pcnt].t = arr[py][px];
 						
-						// Node types
-						if(arr[py][px]===1){
-							arr[py][px] = 0;
-							if(dir===0){
-								py--;dir=1; 
-							}else if(dir===3){
-								px--;dir=2; 
-							}else{pathfinished=true;paths.pop();}
-						}
-
-						else if(arr[py][px]===2){
-							arr[py][px] = 0;
-							if(dir===3){
-								px++;dir=0; 
-							}else if(dir===2){
-								py--;dir=1; 
-							}else{pathfinished=true;paths.pop();}
-						}
-						
-						else if(arr[py][px]===3){
-							arr[py][px] = 0;
-							if(dir===0){
-								px++;
-							}else if(dir===2){
-								px--;
-							}else{pathfinished=true;paths.pop();}
-						}
-
-						else if(arr[py][px]===4){
-							arr[py][px] = 0;
-							if(dir===1){
-								px++;dir=0; 
-							}else if(dir===2){
-								py++;dir=3; 
-							}else{pathfinished=true;paths.pop();}
-						}
-
-						else if(arr[py][px]===5){
-							if(dir===0){
-								arr[py][px] = 13;py++;dir=3; 
-							}else if(dir===1){
-								arr[py][px] = 13;px--;dir=2; 
-							}else if(dir===2){
-								arr[py][px] = 7;py--;dir=1; 
-							}else if(dir===3){
-								arr[py][px] = 7;px++;dir=0; 
-							}
-						}
-
-						else if(arr[py][px]===6){
-							arr[py][px] = 0;
-							if(dir===1){
-								py--;
-							}else if(dir===3){
-								py++;
-							}else{pathfinished=true;paths.pop();}
-						}
-						
-						else if(arr[py][px]===7){
-							arr[py][px] = 0;
-							if(dir===0){
-								py++;dir=3; 
-							}else if(dir===1){
-								px--;dir=2; 
-							}else{pathfinished=true;paths.pop();}
-						}
-
-						else if(arr[py][px]===8){
-							arr[py][px] = 0;
-							if(dir===0){
-								py++;dir=3; 
-							}else if(dir===1){
-								px--;dir=2; 
-							}else{pathfinished=true;paths.pop();}
-						}
-
-						else if(arr[py][px]===9){
-							arr[py][px] = 0;
-							if(dir===1){
-								py--;
-							}else if(dir===3){
-								py++;
-							}else{pathfinished=true;paths.pop();}
-						}
-
-						else if(arr[py][px]===10){
-							if(dir===0){
-								arr[py][px] = 11;py--;dir=1; 
-							}else if(dir===1){
-								arr[py][px] = 14;px++;dir=0; 
-							}else if(dir===2){
-								arr[py][px] = 14;py++;dir=3; 
-							}else if(dir===3){
-								arr[py][px] = 11;px--;dir=2; 
-							}
-						}
-						
-						else if(arr[py][px]===11){
-							arr[py][px] = 0;
-							if(dir===1){
-								px++;dir=0; 
-							}else if(dir===2){
-								py++;dir=3; 
-							}else{pathfinished=true;paths.pop();}
-						}
-
-						else if(arr[py][px]===12){
-							arr[py][px] = 0;
-							if(dir===0){
-								px++;
-							}else if(dir===2){
-								px--;
-							}else{pathfinished=true;paths.pop();}
-						}
-
-						else if(arr[py][px]===13){
-							arr[py][px] = 0;
-							if(dir===2){
-								py--;dir=1; 
-							}else if(dir===3){
-								px++;dir=0; 
-							}else{pathfinished=true;paths.pop();}
-						}
-
-						else if(arr[py][px]===14){
-							arr[py][px] = 0;
-							if(dir===0){
-								py--;dir=1; 
-							}else if(dir===3){
-								px--;dir=2; 
-							}else{pathfinished=true;paths.pop();}
-						}
+						// Next: look up the replacement, direction and coordinate changes = clear this cell, turn if required, walk forward
+						lookuprow = _this.pathscan_combined_lookup[ arr[py][px] ][ dir ];
+						arr[py][px] = lookuprow[0]; dir = lookuprow[1]; px += lookuprow[2]; py += lookuprow[3];
 
 						// Close path
-						if((px-1===paths[pacnt][0].x)&&(py-1===paths[pacnt][0].y)){ 
+						if( (px-1 === paths[pacnt][0].x ) && ( py-1 === paths[pacnt][0].y ) ){ 
 							pathfinished = true;
 							// Discarding 'hole' type paths and paths shorter than pathomit
-							if(holepath || (paths[pacnt].length<pathomit)){
+							if( holepath || (paths[pacnt].length < pathomit) ){
 								paths.pop();
 							}else{
 								pacnt++;
@@ -580,7 +468,7 @@ function ImageTracer(){
 				}else if(ins[pacnt][pcnt].x > nx){
 					if     (ins[pacnt][pcnt].y < ny){ ins[pacnt][pcnt].linesegment = 3; }// SW
 					else if(ins[pacnt][pcnt].y > ny){ ins[pacnt][pcnt].linesegment = 5; }// NW
-					else                            { ins[pacnt][pcnt].linesegment = 4; }// N
+					else                            { ins[pacnt][pcnt].linesegment = 4; }// W
 				}else{
 					if     (ins[pacnt][pcnt].y < ny){ ins[pacnt][pcnt].linesegment = 2; }// S
 					else if(ins[pacnt][pcnt].y > ny){ ins[pacnt][pcnt].linesegment = 6; }// N
@@ -729,12 +617,12 @@ function ImageTracer(){
 	this.roundtodec = function(val,places){ return +val.toFixed(places); },
 	
 	// Getting SVG path element string from a traced path
-	this.svgpathstring = function(desc,segments,fillcolor,options){
+	this.svgpathstring = function(desc,segments,colorstr,options){
 		
 		var str='', pcnt;
 		
 			if( options.roundcoords === -1 ){
-				str = '<path '+desc+'fill="'+fillcolor+'" stroke="'+fillcolor+'" stroke-width="1" d="';
+				str = '<path '+desc+colorstr+'d="';
 				str += 'M '+ segments[0].x1 * options.scale +' '+ segments[0].y1 * options.scale +' ';
 				for(pcnt=0; pcnt<segments.length; pcnt++){
 					str += segments[pcnt].type +' '+ segments[pcnt].x2 * options.scale +' '+ segments[pcnt].y2 * options.scale +' ';
@@ -744,7 +632,7 @@ function ImageTracer(){
 				}
 				str += 'Z" />';
 			}else{
-				str = '<path '+desc+'fill="'+fillcolor+'" stroke="'+fillcolor+'" stroke-width="1" d="';
+				str = '<path '+desc+colorstr+'d="';
 				str += 'M '+ _this.roundtodec( segments[0].x1 * options.scale, options.roundcoords ) +' '+ _this.roundtodec( segments[0].y1 * options.scale, options.roundcoords ) +' ';
 				for(pcnt=0; pcnt<segments.length; pcnt++){
 					str += segments[pcnt].type +' '+ _this.roundtodec( segments[pcnt].x2 * options.scale, options.roundcoords ) +' '+ _this.roundtodec( segments[pcnt].y2 * options.scale, options.roundcoords ) +' ';
@@ -813,7 +701,7 @@ function ImageTracer(){
 			svgstr += _this.svgpathstring(
 					thisdesc,
 					tracedata.layers[l][p],
-					_this.torgbastr(tracedata.palette[l]),
+					_this.tosvgcolorstr(tracedata.palette[l]),
 					options);
 					
 		}// End of Z-index loop
@@ -830,6 +718,11 @@ function ImageTracer(){
 	
 	// Convert color object to rgba string
 	this.torgbastr = function(c){ return 'rgba('+c.r+','+c.g+','+c.b+','+c.a+')'; },
+	
+	// Convert color object to SVG color string
+	this.tosvgcolorstr = function(c){ 
+		return 'fill="rgb('+c.r+','+c.g+','+c.b+')" stroke="rgb('+c.r+','+c.g+','+c.b+')" stroke-width="1" opacity="'+c.a/255.0+'" ';
+	},
 	
 	// Helper function: Appending an <svg> element to a container from an svgstring
 	this.appendSVGString = function(svgstr,parentid){
