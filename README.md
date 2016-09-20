@@ -157,9 +157,9 @@ See [choices for deterministic tracing](https://github.com/jankovicsandras/image
 ### Main Functions
 |Function name|Arguments|Returns|Run type|
 |-------------|---------|-------|--------|
-|```imageToSVG```|```image_url /*string*/ , callback /*function*/ , options /*optional object*/```|Nothing, callback(svgstring) will be executed|Asynchronous|
+|```imageToSVG```|```image_url /*string*/ , callback /*function*/ , options /*optional object*/```|Nothing, ```callback(svgstring)``` will be executed|Asynchronous|
 |```imagedataToSVG```|```imagedata /*object*/ , options /*optional object*/```|```svgstring /*string*/```|Synchronous|
-|```imageToTracedata```|```image_url /*string*/ , callback /*function*/ , options /*optional object*/```|Nothing, callback(tracedata) will be executed|Asynchronous|
+|```imageToTracedata```|```image_url /*string*/ , callback /*function*/ , options /*optional object*/```|Nothing, ```callback(tracedata)``` will be executed|Asynchronous|
 |```imagedataToTracedata```|```imagedata /*object*/ , options /*optional object*/```|```tracedata /*object*/```|Synchronous|
 
 ```imagedata``` is standard [ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) here, ```canvas``` is [canvas](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas) .
@@ -168,7 +168,7 @@ See [choices for deterministic tracing](https://github.com/jankovicsandras/image
 |Function name|Arguments|Returns|Run type|
 |-------------|---------|-------|--------|
 |```appendSVGString```|```svgstring /*string*/, parentid /*string*/```|Nothing, an SVG will be appended to the container div with id=parentid.|Synchronous|
-|```loadImage```|```url /*string*/, callback /*function*/```|Nothing, loading an image from a URL, then executing callback(canvas)|Asynchronous|
+|```loadImage```|```url /*string*/, callback /*function*/```|Nothing, loading an image from a URL, then executing ```callback(canvas)```|Asynchronous|
 |```getImgdata```|```canvas /*object*/```|```imagedata /*object*/```|Synchronous|
 
 ```imagedata``` is standard [ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) here, ```canvas``` is [canvas](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas) .
