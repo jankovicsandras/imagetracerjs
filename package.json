@@ -11,27 +11,29 @@
     "url": "git+https://github.com/jankovicsandras/imagetracerjs.git"
   },
   "keywords": [
-    "image",
+  	"image",
     "tracer",
-    "svg",
     "tracing",
-    "vectorizer",
+    "vector",
+    "raster",
+    "vectorize",
     "vectorizing",
+    "convert",
+    "conversion",
+    "converting",
+    "tracing",
     "bitmap",
+    "svg",
+    "bmp",
     "png",
     "jpg",
     "jpeg",
-    "gif",
-    "bmp",
-    "convert"
+    "gif"
   ],
   "author": "András Jankovics",
-  "license": "UNLICENSED",
+  "license": "Unlicense",
   "bugs": {
     "url": "https://github.com/jankovicsandras/imagetracerjs/issues"
   },
-  "homepage": "https://github.com/jankovicsandras/imagetracerjs#readme",
-  "dependencies": {
-    "png.js": "^0.2.1"
-  }
+  "homepage": "https://github.com/jankovicsandras/imagetracerjs#readme"
 }
