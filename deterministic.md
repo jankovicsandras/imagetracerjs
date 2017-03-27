@@ -1,4 +1,4 @@
-﻿## TLDR; choices for deterministic tracing:
+﻿## TLDR; options for deterministic tracing:
 
 custom palette, `colorquantcycles`:1
 
