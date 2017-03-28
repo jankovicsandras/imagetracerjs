@@ -1,24 +1,28 @@
 ### Process overview
-####1. Color quantization
+#### 1. Color quantization
 The **colorquantization** function creates an indexed image (https://en.wikipedia.org/wiki/Indexed_color)
 
 ![alt Original image (20x scale)](docimages/s2.png)
-####2. Layer separation and edge detection
+
+#### 2. Layer separation and edge detection
 The **layering** function creates arrays for every color, and calculates edge node types. These are at the center of every 4 pixels, shown here as dots.
 
 ![alt layer 0: black](docimages/s3.png)
 ![alt layer 1: yellow](docimages/s4.png)
 ![alt edge node examples](docimages/s7.png)
-####3. Pathscan
+
+#### 3. Pathscan
 The **pathscan** function finds chains of edge nodes, example: the cyan dots and lines.
 
 ![alt an edge node path](docimages/s8.png)
-####4. Interpolation
+
+#### 4. Interpolation
 The **internodes** function interpolates the coordinates of the edge node paths. Every line segment in the new path has one of the 8 directions (East, North East, N, NW, W, SW, S, SE).
 
 ![alt interpolating](docimages/s9.png)
 ![alt interpolation result](docimages/s10.png)
-####5. Tracing
+
+#### 5. Tracing
 The **tracepath** function splits the interpolated paths into sequences with two directions.
 
 ![alt a sequence](docimages/s11.png)
@@ -34,7 +38,8 @@ The **fitseq** function tries to fit a quadratic spline through the error point.
 ![alt result with control points](docimages/s15.png)
 
 If the **fitseq** function can not fit a straight line or a quadratic spline to the sequence with the given error tresholds, then it will split the sequence in two and recursively call **fitseq** on each part.
-####6. SVG rendering
+
+#### 6. SVG rendering
 The coordinates are rendered to [SVG Paths](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths) in the **getsvgstring** function.
 
 ### Ideas for improvement
