@@ -17,7 +17,7 @@ This is a major update, changing some internal logic and option default values. 
  - Line filter with ```options.linefilter``` ( default : false )
  - Simplified ```getsvgstring()```; ```options.desc = false``` by default; splitpoint = fitpoint in fitseq(); small bugfixes and optimizations
 
-Version history and README for the old 1.1.2 version is here: [options for deterministic tracing](README_v1.1.2.md)
+Version history and README for the old 1.1.2 version is [here.](README_v1.1.2.md)
 
 ### Option presets
 
@@ -31,7 +31,9 @@ ImageTracer.imageToSVG(
 );
 ```
 
-[Option presets gallery](docimages/option_presets_small.png)
+![Option presets gallery](docimages/option_presets_small.png)
+
+These strings can be passed instead of the options object: 'Default', 'Posterized1', 'Posterized2', 'Curvy', 'Sharp', 'Detailed', 'Smoothed', 'Grayscale', 'Fixedpalette', 'Randomsampling1', 'Randomsampling2', 'Artistic1', 'Artistic2', 'Artistic3', 'Artistic4' .
 
 Check out [imagetracer_options_gallery.html](https://github.com/jankovicsandras/imagetracerjs/blob/master/imagetracer_options_gallery.html) or a [bigger image](docimages/option_presets.png).
 
