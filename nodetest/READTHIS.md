@@ -3,7 +3,7 @@ Run like this:
 >node nodetest
 
 imagetracer.js path in this example is
-../imagetracer_v1.1.1.js
+../imagetracer_v1.2.0.js
 
 PNG.js and PNGReader.js are saved on 2016-03-04 from
 

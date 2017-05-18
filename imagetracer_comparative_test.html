@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<title>imagetracer.js comparative test</title>
+	<style>
+	
+		body {
+			zoom: 3; 
+			-moz-transform: scale(3); 
+			-moz-transform-origin: 0 0;
+		} 
+	
+		img, svg, canvas {
+			background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAIklEQVQImWPQ1tb+r62t/d/f3/+/v7//fwYMARgDJoEhAACRARthAfQS8AAAAABJRU5ErkJggg==) repeat;
+			border: solid 1px cyan;
+			image-rendering: optimizeSpeed;             /* Older versions of FF          */
+			image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
+			image-rendering: -webkit-optimize-contrast; /* Safari                        */
+			image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
+			image-rendering: pixelated;                 /* Awesome future-browsers       */
+			-ms-interpolation-mode: nearest-neighbor;   /* IE                            */
+		}
+		
+		table{ border: solid 1px gray; border-collapse:collapse; }
+		td{ border: solid 1px gray; vertical-align:top; }
+		th{ border: solid 1px gray; }
+		
+	</style>
+	<script src="imagetracer_v1.2.0.js"></script>
+	<script src="imagetracer_v1.1.2.js"></script>
+	<script>
+		
+		var cnt = 0, k = Object.keys(ImageTracer.optionpresets), d;
+	
+		function onload_init(){
+			d = document.getElementById('contentdiv');
+			tracenext();
+		}
+		
+		function tracenext(){
+			if( cnt < k.length * 2 ){
+				
+				if( cnt % 2 === 0 ){
+					ImageTracer.imageToSVG('testimages/combined.png', 
+						function(svgstr){
+							d.innerHTML += svgstr;
+							cnt++;
+							tracenext();
+						},
+						Object.keys(ImageTracer.optionpresets)[Math.floor(cnt/2)]
+					);
+				}else{
+					ImageTracer112.imageToSVG('testimages/combined.png', 
+							function(svgstr){
+						d.innerHTML += svgstr+'<br/>';
+								cnt++;
+								tracenext();
+							},
+							ImageTracer.optionpresets[ Object.keys(ImageTracer.optionpresets)[Math.floor(cnt/2)] ]
+					);
+				}
+				
+			}// End of queue
+		}// End of tracenext()
+		
+	</script>
+</head>
+
+<body style="background-color:rgb(32,32,32);color:rgb(255,255,255);font-family:monospace;" onload="onload_init()" >
+	<noscript style="background-color:rgb(255,0,0);color:rgb(255,255,255);font-size: 250%;">Please enable JavaScript!</noscript>
+	<div id="contentdiv">
+		<img src="testimages/combined.png" /><br/>
+	</div>
+</body>
+
+</html>

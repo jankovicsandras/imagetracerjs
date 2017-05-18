@@ -12,7 +12,7 @@
 		td{ border: solid 1px gray; vertical-align:top; }
 		th{ border: solid 1px gray; }
 	</style>
-	<script src="imagetracer_v1.1.2.js"></script>
+	<script src="imagetracer_v1.2.0.js"></script>
 	<script>
 		var queue;
 		var stats = [], tt, rt;
@@ -39,16 +39,20 @@
 				try{ repeatnum = parseInt(email = document.getElementById('repeatinput').value); }catch(e){log(e);}
 				
 				// Options
-				var optionses = [];
-				if(document.getElementById('ocb1').checked){ optionses.push({}); }
+				var optionses = [], ks = Object.keys(ImageTracer.optionpresets);
+				for(var i=0; i<ks.length; i++){
+					if(document.getElementById('ocb'+i).checked){ optionses.push(ImageTracer.optionpresets[ks[i]]); }
+				}
+				/*if(document.getElementById('ocb1').checked){ optionses.push({}); }
 				if(document.getElementById('ocb2').checked){ optionses.push({ blurradius:2, ltres:0.1, numberofcolors:64 }); }
-				if(document.getElementById('ocb3').checked){ optionses.push({ numberofcolors:4, roundcoords:0, desc:false, colorquantcycles:1 }); }
-				if(document.getElementById('ocb4').checked){
+				if(document.getElementById('ocb3').checked){ optionses.push({ strokewidth:4, blurradius:5, roundcoords:0, desc:false, scale:4, }); }
+				*/
+				if(document.getElementById('ocbx').checked){
 					try{
 						optionses.push( JSON.parse( document.getElementById('custom1input').value ) );
 					}catch(e){ log(e); }
 				}
-				if(document.getElementById('ocb5').checked){
+				if(document.getElementById('ocby').checked){
 					try{
 						optionses.push( JSON.parse( document.getElementById('custom2input').value ) );
 					}catch(e){ log(e); }
@@ -196,7 +200,11 @@
 			
 		}// End of processqueue()
 		
-		function stopprocessing(){ clearTimeout(timeoutid); timeoutid = 0; totaltime = Date.now() - totaltime; alert('Time elapsed: '+totaltime+' ms.'); }
+		function stopprocessing(){ 
+			clearTimeout(timeoutid); timeoutid = 0; 
+			totaltime = Date.now() - totaltime; 
+			alert('Time elapsed: '+totaltime+' ms.'); 
+		}
 		
 		function registerstats(filename,w,h,area,svglength,tracetime,rendertime,pathcnt,rgbadiff,pixeldiff,options){
 			var tableref = document.getElementById('logtable');
@@ -230,9 +238,18 @@
 			img.setAttribute('src','data:image/svg+xml;base64,'+btoa(svgstr));
 		}
 		
+		function onload_init(){
+			
+			var k = Object.keys(ImageTracer.optionpresets), s='';
+			for(var i=0; i<k.length; i++){
+				s += '<label><input type="checkbox" id="ocb'+i+'" value="1" '+(i<6?'checked="true"':'')+' ><b>'+k[i]+'</b> : '+JSON.stringify(ImageTracer.optionpresets[k[i]])+'</label><br/>';
+			}
+			document.getElementById('ocbcontainer').innerHTML = s;
+		}
+		
 	</script>
 	</head>
-	<body style="background-color:rgb(32,32,32);color:rgb(255,255,255);font-family:monospace;" >
+	<body style="background-color:rgb(32,32,32);color:rgb(255,255,255);font-family:monospace;" onload="onload_init()" >
 	<noscript style="background-color:rgb(255,0,0);color:rgb(255,255,255);font-size: 250%;">Please enable JavaScript!</noscript>
 	<form id="testcontroller">
 	<h1>Test images</h1>
@@ -240,37 +257,35 @@
 	<tbody>
 		<tr>
 			<td><label><input type="checkbox" id="icb1" value="1" checked="true">1.png</label><br><img src="testimages/1.png"></td> 
-			<td><label><input type="checkbox" id="icb2" value="1" checked="true">2.png</label><br><img src="testimages/2.png"></td>
-			<td><label><input type="checkbox" id="icb3" value="1" checked="true">3.png</label><br><img src="testimages/3.png"></td>
-			<td><label><input type="checkbox" id="icb4" value="1" checked="true">4.png</label><br><img src="testimages/4.png"></td>
+			<td><label><input type="checkbox" id="icb2" value="1" checked="true" >2.png</label><br><img src="testimages/2.png"></td>
+			<td><label><input type="checkbox" id="icb3" value="1" checked="true" >3.png</label><br><img src="testimages/3.png"></td>
+			<td><label><input type="checkbox" id="icb4" value="1" checked="true" >4.png</label><br><img src="testimages/4.png"></td>
 		</tr>
 		<tr>
-			<td><label><input type="checkbox" id="icb5" value="1" checked="true">5.png</label><br><img src="testimages/5.png"></td> 
-			<td><label><input type="checkbox" id="icb6" value="1" checked="true">6.png</label><br><img src="testimages/6.png"></td>
-			<td><label><input type="checkbox" id="icb7" value="1" checked="true">7.png</label><br><img src="testimages/7.png"></td>
-			<td><label><input type="checkbox" id="icb8" value="1" checked="true">8.png</label><br><img src="testimages/8.png"></td>
+			<td><label><input type="checkbox" id="icb5" value="1" checked="true" >5.png</label><br><img src="testimages/5.png"></td> 
+			<td><label><input type="checkbox" id="icb6" value="1" checked="true" >6.png</label><br><img src="testimages/6.png"></td>
+			<td><label><input type="checkbox" id="icb7" value="1" checked="true" >7.png</label><br><img src="testimages/7.png"></td>
+			<td><label><input type="checkbox" id="icb8" value="1" checked="true" >8.png</label><br><img src="testimages/8.png"></td>
 		</tr>
 		<tr>
-			<td><label><input type="checkbox" id="icb9" value="1" checked="true">9.png</label><br><img src="testimages/9.png"></td> 
-			<td><label><input type="checkbox" id="icb10" value="1" checked="true">10.png</label><br><img src="testimages/10.png"></td>
-			<td><label><input type="checkbox" id="icb11" value="1" checked="true">11.png</label><br><img src="testimages/11.png"></td>
-			<td><label><input type="checkbox" id="icb12" value="1" checked="true">12.png</label><br><img src="testimages/12.png"></td>
+			<td><label><input type="checkbox" id="icb9" value="1" checked="true" >9.png</label><br><img src="testimages/9.png"></td> 
+			<td><label><input type="checkbox" id="icb10" value="1" checked="true" >10.png</label><br><img src="testimages/10.png"></td>
+			<td><label><input type="checkbox" id="icb11" value="1" checked="true" >11.png</label><br><img src="testimages/11.png"></td>
+			<td><label><input type="checkbox" id="icb12" value="1" checked="true" >12.png</label><br><img src="testimages/12.png"></td>
 		</tr>
 		<tr>
-			<td><label><input type="checkbox" id="icb13" value="1" checked="true">13.png</label><br><img src="testimages/13.png"></td> 
-			<td><label><input type="checkbox" id="icb14" value="1" checked="true">14.png</label><br><img src="testimages/14.png"></td>
-			<td><label><input type="checkbox" id="icb15" value="1" checked="true">15.png</label><br><img src="testimages/15.png"></td>
-			<td><label><input type="checkbox" id="icb16" value="1" checked="true">16.png</label><br><img src="testimages/16.png"></td>
+			<td><label><input type="checkbox" id="icb13" value="1" checked="true" >13.png</label><br><img src="testimages/13.png"></td> 
+			<td><label><input type="checkbox" id="icb14" value="1" checked="true" >14.png</label><br><img src="testimages/14.png"></td>
+			<td><label><input type="checkbox" id="icb15" value="1" checked="true" >15.png</label><br><img src="testimages/15.png"></td>
+			<td><label><input type="checkbox" id="icb16" value="1" checked="true" >16.png</label><br><img src="testimages/16.png"></td>
 		</tr>
 	</tbody>
 	</table>
 	<h1>Settings</h1>
 	<label><input type="checkbox" id="cbox0" value="1" checked="true">Draw SVG</label><br>
-	<label><input type="checkbox" id="ocb1" value="1" checked="true">Options: <b>{}</b> (default)</label><br>
-	<label><input type="checkbox" id="ocb2" value="1" checked="true">Options: <b>{ "blurradius":2, "ltres":0.1, "numberofcolors":64 }</b> (smoother)</label><br>
-	<label><input type="checkbox" id="ocb3" value="1" checked="true">Options: <b>{ "numberofcolors":4, "roundcoords":0, "desc":"false", "colorquantcycles":1 }</b> (faster, small size)</label><br>
-	<label><input type="checkbox" id="ocb4" value="1" >Custom Options 1:</label><input type="text" id="custom1input" value="" style="width:40em" ><br>
-	<label><input type="checkbox" id="ocb5" value="1" >Custom Options 2:</label><input type="text" id="custom2input" value="" style="width:40em" ><br>
+	<div id="ocbcontainer"></div>
+	<label><input type="checkbox" id="ocbx" value="1" >Custom Options 1:</label><input type="text" id="custom1input" value="" style="width:40em" ><br>
+	<label><input type="checkbox" id="ocby" value="1" >Custom Options 2:</label><input type="text" id="custom2input" value="" style="width:40em" ><br>
 	Example Custom Options:<br>{"ltres":1,"qtres":1,"pathomit":8,"colorsampling":true,"numberofcolors":16,"mincolorratio":0.02,"colorquantcycles":3,"scale":1,"simplifytolerance":0,"roundcoords":1,"lcpr":0,"qcpr":0,"desc":true,"viewbox":false,"blurradius":0,"blurdelta":20}<br>	
 	<label><input type="text" id="repeatinput" value="1">Repeats</label><br>
 	<button id="startbutton" type="button" onclick="startprocess()" >START</button>

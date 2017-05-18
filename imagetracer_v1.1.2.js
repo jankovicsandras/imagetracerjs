@@ -38,7 +38,7 @@ For more information, please refer to http://unlicense.org/
 
 (function(){ 'use strict';
 
-function ImageTracer(){
+function ImageTracer112(){
 	var _this = this;
 
 	this.versionnumber = '1.1.2',
@@ -921,9 +921,9 @@ function ImageTracer(){
 }// End of ImageTracer object
 
 // export as AMD module / Node module / browser or worker variable // TODO: new ?
-if (typeof define === 'function' && define.amd) define(function() { return new ImageTracer(); });
-else if (typeof module !== 'undefined') module.exports = new ImageTracer();
-else if (typeof self !== 'undefined') self.ImageTracer = new ImageTracer();
-else window.ImageTracer = new ImageTracer();
+if (typeof define === 'function' && define.amd) define(function() { return new ImageTracer112(); });
+else if (typeof module !== 'undefined') module.exports = new ImageTracer112();
+else if (typeof self !== 'undefined') self.ImageTracer112 = new ImageTracer112();
+else window.ImageTracer112 = new ImageTracer112();
 
 })();

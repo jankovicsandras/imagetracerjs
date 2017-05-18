@@ -1,4 +1,8 @@
-﻿## TLDR; options for deterministic tracing:
+﻿
+# WARNING: version(s) >= 1.2.0 is deterministic by default.
+# This is kept here for versions <= 1.1.2
+
+## TLDR; options for deterministic tracing:
 
 custom palette, `colorquantcycles`:1
 

@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/jankovicsandras/imagetracerjs.git"
   },
-  "main": "imagetracer_v1.1.2.js",
+  "main": "imagetracer_v1.2.0.js",
   "keywords": [
   	"image",
     "tracer",
@@ -17,7 +17,6 @@
     "convert",
     "conversion",
     "converting",
-    "tracing",
     "bitmap",
     "svg",
     "bmp",
