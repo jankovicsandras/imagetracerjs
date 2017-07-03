@@ -1,5 +1,5 @@
 /*
-	imagetracer.js version 1.2.0
+	imagetracer.js version 1.2.1
 	Simple raster image tracer and vectorizer written in JavaScript.
 	by András Jankovics
 	andras@jankovics.net
@@ -41,7 +41,7 @@ For more information, please refer to http://unlicense.org/
 function ImageTracer(){
 	var _this = this;
 
-	this.versionnumber = '1.2.0',
+	this.versionnumber = '1.2.1',
 	
 	////////////////////////////////////////////////////////////
 	//
@@ -932,11 +932,7 @@ function ImageTracer(){
 		var i,j,k,d,idx,racc,gacc,bacc,aacc,wacc;
 		
 		// new ImageData
-		var canvas = document.createElement('canvas');
-		canvas.width = imgd.width;
-		canvas.height = imgd.height;
-		var context = canvas.getContext('2d');
-		var imgd2 = context.createImageData(imgd);
+		var imgd2 = { width:imgd.width, height:imgd.height, data:[] };
 		
 		// radius and delta limits, this kernel
 		radius = Math.floor(radius); if(radius<1){ return imgd; } if(radius>5){ radius = 5; } delta = Math.abs( delta ); if(delta>1024){ delta = 1024; }

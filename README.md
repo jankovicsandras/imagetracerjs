@@ -5,6 +5,10 @@ Simple raster image tracer and vectorizer written in JavaScript.
 
 by András Jankovics
 
+### 1.2.1
+
+ - FIXED: Gaussian blur preprocessing is now independent of DOM and canvas, thus working directly with Node.js (Issue #9)
+
 ### 1.2.0
 
 This is a major update, changing some internal logic and option default values. The API is compatible, so it should work out of the box.
@@ -40,7 +44,7 @@ Check out [imagetracer_options_gallery.html](https://github.com/jankovicsandras/
 ### Using in the browser
 Include the script:
 ```javascript
-<script src="imagetracer_v1.2.0.js"></script>
+<script src="imagetracer_v1.2.1.js"></script>
 ```
 Then
 ```javascript
@@ -120,7 +124,7 @@ See nodetest folder. Example:
 
 var fs = require('fs');
 
-var ImageTracer = require( __dirname + '/../imagetracer_v1.2.0' );
+var ImageTracer = require( __dirname + '/../imagetracer_v1.2.1' );
 
 // This example uses https://github.com/arian/pngjs 
 // , but other libraries can be used to load an image file to an ImageData object.
