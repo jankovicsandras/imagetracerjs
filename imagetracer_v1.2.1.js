@@ -1021,6 +1021,7 @@ function ImageTracer(){
 	this.loadImage = function(url,callback){
 		var img = new Image();
 		img.src = url;
+		img.crossOrigin = 'Anonymous';
 		img.onload = function(){
 			var canvas = document.createElement('canvas');
 			canvas.width = img.width;
