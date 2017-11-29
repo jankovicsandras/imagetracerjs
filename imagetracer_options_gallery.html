@@ -29,7 +29,7 @@
 		th{ border: solid 1px gray; }
 		
 	</style>
-	<script src="imagetracer_v1.2.1.js"></script>
+	<script src="imagetracer_v1.2.2.js"></script>
 	<script>
 		
 		var cnt = 0;
@@ -39,7 +39,7 @@
 		}
 		
 		function tracenext(){
-			if(cnt<15){
+			if(cnt<16){
 				ImageTracer.imageToSVG('testimages/combined.png', 
 					function(svgstr){
 						document.getElementById('td'+(cnt+1)).innerHTML = svgstr +'<br/>'+Object.keys(ImageTracer.optionpresets)[cnt]+'  '+svgstr.length+' bytes';
@@ -58,10 +58,10 @@
 	<noscript style="background-color:rgb(255,0,0);color:rgb(255,255,255);font-size: 250%;">Please enable JavaScript!</noscript>
 	<div id="content">
 	<table><tbody>
-	<tr id="tr0" ><td id="td0"><img src="testimages/combined.png" /><br>Original</td><td id="td1"></td><td id="td2"></td><td id="td3"></td></tr>
-	<tr id="tr1" ><td id="td4"></td><td id="td5"></td><td id="td6"></td><td id="td7"></td></tr>
-	<tr id="tr2" ><td id="td8"></td><td id="td9"></td><td id="td10"></td><td id="td11"></td></tr>
-	<tr id="tr3" ><td id="td12"></td><td id="td13"></td><td id="td14"></td><td id="td15"></td></tr>
+	<tr id="tr0" ><td id="td0"><img src="testimages/combined.png" /><br>Original</td><td id="td1"></td><td id="td2"></td><td id="td3"></td><td id="td16"></td></tr>
+	<tr id="tr1" ><td id="td4"></td><td id="td5"></td><td id="td6"></td><td id="td7"></td><td id="td17"></td></tr>
+	<tr id="tr2" ><td id="td8"></td><td id="td9"></td><td id="td10"></td><td id="td11"></td><td id="td18"></td></tr>
+	<tr id="tr3" ><td id="td12"></td><td id="td13"></td><td id="td14"></td><td id="td15"></td><td id="td19"></td></tr>
 	</tbody></table>
 	</div>
 </body>

@@ -5,6 +5,12 @@ Simple raster image tracer and vectorizer written in JavaScript.
 
 by András Jankovics
 
+### 1.2.2
+
+ - FIXED: missing hole in path because of incorrect bounding box (Issue #11)
+ - Posterized3 option preset
+ - Changed svgpathstring() arguments to simplify getsvgstring()
+
 ### 1.2.1
 
  - FIXED: Gaussian blur preprocessing is now independent of DOM and canvas, thus working directly with Node.js (Issue #9)
@@ -37,14 +43,14 @@ ImageTracer.imageToSVG(
 
 ![Option presets gallery](docimages/option_presets_small.png)
 
-These strings can be passed instead of the options object: 'Default', 'Posterized1', 'Posterized2', 'Curvy', 'Sharp', 'Detailed', 'Smoothed', 'Grayscale', 'Fixedpalette', 'Randomsampling1', 'Randomsampling2', 'Artistic1', 'Artistic2', 'Artistic3', 'Artistic4' .
+These strings can be passed instead of the options object: 'Default', 'Posterized1', 'Posterized2', 'Posterized3', 'Curvy', 'Sharp', 'Detailed', 'Smoothed', 'Grayscale', 'Fixedpalette', 'Randomsampling1', 'Randomsampling2', 'Artistic1', 'Artistic2', 'Artistic3', 'Artistic4' .
 
 Check out [imagetracer_options_gallery.html](https://github.com/jankovicsandras/imagetracerjs/blob/master/imagetracer_options_gallery.html) or a [bigger image](docimages/option_presets.png).
 
 ### Using in the browser
 Include the script:
 ```javascript
-<script src="imagetracer_v1.2.1.js"></script>
+<script src="imagetracer_v1.2.2.js"></script>
 ```
 Then
 ```javascript
@@ -124,7 +130,7 @@ See nodetest folder. Example:
 
 var fs = require('fs');
 
-var ImageTracer = require( __dirname + '/../imagetracer_v1.2.1' );
+var ImageTracer = require( __dirname + '/../imagetracer_v1.2.2' );
 
 // This example uses https://github.com/arian/pngjs 
 // , but other libraries can be used to load an image file to an ImageData object.

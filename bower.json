@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/jankovicsandras/imagetracerjs.git"
   },
-  "main": "imagetracer_v1.2.1.js",
+  "main": "imagetracer_v1.2.2.js",
   "keywords": [
   	"image",
     "tracer",
