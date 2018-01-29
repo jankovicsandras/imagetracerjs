@@ -456,8 +456,11 @@ function ImageTracer(){
 						if( (px-1 === paths[pacnt].points[0].x ) && ( py-1 === paths[pacnt].points[0].y ) ){ 
 							pathfinished = true;
 							// Discarding paths shorter than pathomit
-							if( paths[pacnt].length < pathomit ){ paths.pop(); pacnt--; }
-							
+							if( paths[pacnt].points.length < pathomit ){ 
+								paths.pop();
+								pcnt++;
+								break;
+							}
 							paths[pacnt].isholepath = holepath ? true : false;
 							
 							// Finding the parent shape for this hole
@@ -477,8 +480,9 @@ function ImageTracer(){
 								paths[parentidx].holechildren.push( pacnt );
 								
 							}// End of holepath parent finding
-							
+
 							pacnt++;
+							
 						}// End of Close path
 						
 						pcnt++;
