@@ -1,5 +1,5 @@
 /*
-	imagetracer.js version 1.2.2
+	imagetracer.js version 1.2.3
 	Simple raster image tracer and vectorizer written in JavaScript.
 	by András Jankovics
 	andras@jankovics.net
@@ -41,7 +41,7 @@ For more information, please refer to http://unlicense.org/
 function ImageTracer(){
 	var _this = this;
 
-	this.versionnumber = '1.2.2',
+	this.versionnumber = '1.2.3',
 	
 	////////////////////////////////////////////////////////////
 	//
@@ -54,12 +54,14 @@ function ImageTracer(){
 	this.imageToSVG = function( url, callback, options ){
 		options = _this.checkoptions(options);
 		// loading image, tracing and callback
-		_this.loadImage(url,
+		_this.loadImage(
+			url,
 			function(canvas){
 				callback(
 					_this.imagedataToSVG( _this.getImgdata(canvas), options )
 				);
-			}
+			},
+			options
 		);
 	},// End of imageToSVG()
 	
@@ -77,12 +79,14 @@ function ImageTracer(){
 	this.imageToTracedata = function( url, callback, options ){
 		options = _this.checkoptions(options);
 		// loading image, tracing and callback
-		_this.loadImage(url,
+		_this.loadImage(
+				url,
 				function(canvas){
 					callback(
 						_this.imagedataToTracedata( _this.getImgdata(canvas), options )
 					);
-				}
+				},
+				options
 		);
 	},// End of imageToTracedata()
 	
@@ -150,6 +154,7 @@ function ImageTracer(){
 		}
 
 		// Tracing
+		if(!options.hasOwnProperty('corsenabled')){ options.corsenabled = false; }
 		if(!options.hasOwnProperty('ltres')){ options.ltres = 1; }
 		if(!options.hasOwnProperty('qtres')){ options.qtres = 1; }
 		if(!options.hasOwnProperty('pathomit')){ options.pathomit = 8; }
@@ -277,6 +282,7 @@ function ImageTracer(){
 		}// End of Repeat clustering step options.colorquantcycles times
 		
 		return { array:arr, palette:palette };
+		
 	},// End of colorquantization()
 	
 	// Sampling a palette from imagedata 
@@ -416,7 +422,7 @@ function ImageTracer(){
 	this.pathscan = function( arr, pathomit ){
 		pathomit = pathomit || 8;
 		var paths=[], pacnt=0, pcnt=0, px=0, py=0, w = arr[0].length, h = arr.length,
-		dir=0, pathfinished=true, holepath=false, lookuprow;
+			dir=0, pathfinished=true, holepath=false, lookuprow;
 		
 		for(var j=0; j<h; j++){
 			for(var i=0; i<w; i++){
@@ -453,35 +459,37 @@ function ImageTracer(){
 						arr[py][px] = lookuprow[0]; dir = lookuprow[1]; px += lookuprow[2]; py += lookuprow[3];
 
 						// Close path
-						if( (px-1 === paths[pacnt].points[0].x ) && ( py-1 === paths[pacnt].points[0].y ) ){ 
+						if( (px-1 === paths[pacnt].points[0].x ) && ( py-1 === paths[pacnt].points[0].y ) ){
 							pathfinished = true;
-							// Discarding paths shorter than pathomit
-							if( paths[pacnt].points.length < pathomit ){ 
-								paths.pop();
-								pcnt++;
-								break;
-							}
-							paths[pacnt].isholepath = holepath ? true : false;
 							
-							// Finding the parent shape for this hole
-							if(holepath){
+							// Discarding paths shorter than pathomit
+							if( paths[pacnt].points.length < pathomit ){
+								paths.pop();
+							}else{
+							
+								paths[pacnt].isholepath = holepath ? true : false;
 								
-								var parentidx = 0, parentbbox = [-1,-1,w+1,h+1];
-								for(var parentcnt=0; parentcnt < pacnt; parentcnt++){
-									if( (!paths[parentcnt].isholepath) &&
-										_this.boundingboxincludes( paths[parentcnt].boundingbox , paths[pacnt].boundingbox ) &&
-										_this.boundingboxincludes( parentbbox , paths[parentcnt].boundingbox )
-									){
-										parentidx = parentcnt;
-										parentbbox = paths[parentcnt].boundingbox;
+								// Finding the parent shape for this hole
+								if(holepath){
+									
+									var parentidx = 0, parentbbox = [-1,-1,w+1,h+1];
+									for(var parentcnt=0; parentcnt < pacnt; parentcnt++){
+										if( (!paths[parentcnt].isholepath) &&
+											_this.boundingboxincludes( paths[parentcnt].boundingbox , paths[pacnt].boundingbox ) &&
+											_this.boundingboxincludes( parentbbox , paths[parentcnt].boundingbox )
+										){
+											parentidx = parentcnt;
+											parentbbox = paths[parentcnt].boundingbox;
+										}
 									}
-								}
+									
+									paths[parentidx].holechildren.push( pacnt );
+									
+								}// End of holepath parent finding
 								
-								paths[parentidx].holechildren.push( pacnt );
-								
-							}// End of holepath parent finding
-
-							pacnt++;
+								pacnt++;
+							
+							}
 							
 						}// End of Close path
 						
@@ -513,7 +521,7 @@ function ImageTracer(){
 	
 	// 4. interpollating between path points for nodes with 8 directions ( East, SouthEast, S, SW, W, NW, N, NE )
 	this.internodes = function( paths, options ){
-		var ins = [], palen=0, nextidx=0, nextidx2=0, previdx=0, previdx2=0, nx=0, ny=0, pacnt, pcnt;
+		var ins = [], palen=0, nextidx=0, nextidx2=0, previdx=0, previdx2=0, pacnt, pcnt;
 		
 		// paths loop
 		for(pacnt=0; pacnt<paths.length; pacnt++){
@@ -640,10 +648,11 @@ function ImageTracer(){
 			segtype1 = path.points[pcnt].linesegment; segtype2 = -1; seqend=pcnt+1;
 			while(
 				((path.points[seqend].linesegment === segtype1) || (path.points[seqend].linesegment === segtype2) || (segtype2 === -1)) 
-				&& (seqend < path.points.length-1)
-				){
-					if((path.points[seqend].linesegment!==segtype1) && (segtype2===-1)){ segtype2 = path.points[seqend].linesegment; }
-					seqend++;
+				&& (seqend < path.points.length-1) ){
+				
+				if((path.points[seqend].linesegment!==segtype1) && (segtype2===-1)){ segtype2 = path.points[seqend].linesegment; }
+				seqend++;
+				
 			}
 			if(seqend === path.points.length-1){ seqend = 0; }
 
@@ -799,6 +808,7 @@ function ImageTracer(){
 					
 					str += hsmp.segments[pcnt].x1 * options.scale +' '+ hsmp.segments[pcnt].y1 * options.scale +' ';
 				}
+				
 			}else{
 				
 				if(hsmp.segments[ hsmp.segments.length-1 ].hasOwnProperty('x3')){
@@ -1019,8 +1029,9 @@ function ImageTracer(){
 	},// End of blur()
 	
 	// Helper function: loading an image from a URL, then executing callback with canvas as argument
-	this.loadImage = function(url,callback){
+	this.loadImage = function(url,callback,options){
 		var img = new Image();
+		if(options && options.corsenabled){ img.crossOrigin = 'Anonymous'; }
 		img.src = url;
 		img.onload = function(){
 			var canvas = document.createElement('canvas');
@@ -1094,9 +1105,12 @@ function ImageTracer(){
 }// End of ImageTracer object
 
 // export as AMD module / Node module / browser or worker variable
-if (typeof define === 'function' && define.amd) define(function() { return new ImageTracer(); });
-else if (typeof module !== 'undefined') module.exports = new ImageTracer();
-else if (typeof self !== 'undefined') self.ImageTracer = new ImageTracer();
-else window.ImageTracer = new ImageTracer();
+if(typeof define === 'function' && define.amd){
+	define(function() { return new ImageTracer(); });
+}else if(typeof module !== 'undefined'){
+	module.exports = new ImageTracer();
+}else if(typeof self !== 'undefined'){
+	self.ImageTracer = new ImageTracer();
+}else window.ImageTracer = new ImageTracer();
 
 })();

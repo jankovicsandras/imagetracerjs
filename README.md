@@ -3,7 +3,11 @@
 
 Simple raster image tracer and vectorizer written in JavaScript.
 
-by András Jankovics
+### 1.2.3
+
+ - Node.js Command line interface (Enhancement Issue #13)
+ - FIXED: Pathomit problem thanks to EusthEnoptEron (Issue #14)
+ - options.corsenabled for [CORS Image loading](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image) thanks to neel-radica (Issue #12)
 
 ### 1.2.2
 
@@ -50,7 +54,7 @@ Check out [imagetracer_options_gallery.html](https://github.com/jankovicsandras/
 ### Using in the browser
 Include the script:
 ```javascript
-<script src="imagetracer_v1.2.2.js"></script>
+<script src="imagetracer_v1.2.3.js"></script>
 ```
 Then
 ```javascript
@@ -124,50 +128,44 @@ ImageTracer.loadImage(
 ```
 
 ### Using with Node.js
-See nodetest folder. Example:
-```javascript
-"use strict";
 
-var fs = require('fs');
+Please read nodecli/nodecli.js
 
-var ImageTracer = require( __dirname + '/../imagetracer_v1.2.2' );
+Node.js Command line interface example:
 
-// This example uses https://github.com/arian/pngjs 
-// , but other libraries can be used to load an image file to an ImageData object.
-var PNGReader = require( __dirname + '/PNGReader' );
-
-fs.readFile(
-		
-	__dirname + '/../testimages/1.png', // Input file path
-	
-	function( err, bytes ){
-		if(err){ throw err; }
-	
-		var reader = new PNGReader(bytes);
-	
-		reader.parse( function( err, png ){
-			if(err){ throw err; }
-			
-			// creating an ImageData object
-			var myImageData = { width:png.width, height:png.height, data:png.pixels };
-			
-			// tracing to SVG string
-			var options = { ltres:0.1 }; // optional
-			var svgstring = ImageTracer.imagedataToSVG( myImageData, options );
-			
-			// writing to file
-			fs.writeFile(
-				__dirname + '/test.svg', // Output file path
-				svgstring,
-				function(err){ if(err){ throw err; } console.log( __dirname + '/test.svg was saved!' ); }
-			);
-			
-		});// End of reader.parse()
-		
-	}// End of readFile callback()
-	
-);// End of fs.readFile()
 ```
+imagetracerjs/nodecli>node nodecli ../panda.png outfilename panda.svg -scale 10
+```
+
+Expected result:
+
+```
+imagetracerjs/nodecli/panda.svg was saved!
+```
+
+#### Supported CLI arguments:
+
+<input file name must be the first argument REQUIRED>
+outfilename or -outfilename   REQUIRED
+ltres or -ltres
+qtres or -qtres
+pathomit or -pathomit
+rightangleenhance or -rightangleenhance
+colorsampling or -colorsampling
+numberofcolors or -numberofcolors
+mincolorratio or -mincolorratio
+colorquantcycles or -colorquantcycles
+blurradius or -blurradius
+blurdelta or -blurdelta
+strokewidth or -strokewidth
+linefilter or -linefilter
+scale or -scale
+roundcoords or -roundcoords
+viewbox or -viewbox
+desc or -desc
+lcpr or -lcpr
+qcpr or -qcpr
+corsenabled or -corsenabled
 
 ### Deterministic output
 ImageTracer version >= 1.2.0 is deterministic by default, but randomization can be turned back on.
@@ -214,13 +212,14 @@ There are more functions for advanced users, read the source if you are interest
 |```roundcoords```|```1```|rounding coordinates to a given decimal place. 1 means rounded to 1 decimal place like 7.3 ; 3 means rounded to 3 places, like 7.356|
 |```viewbox```|```false```|Enable or disable SVG viewBox.|
 |```desc```|```false```|Enable or disable SVG descriptions.|
+|```corsenabled```|```false```|Enable or disable [CORS Image loading](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image)|
 |```lcpr```|```0```|Straight line control point radius, if this is greater than zero, small circles will be drawn in the SVG. Do not use this for big/complex images.|
 |```qcpr```|```0```|Quadratic spline control point radius, if this is greater than zero, small circles and lines will be drawn in the SVG. Do not use this for big/complex images.|
 |```layercontainerid```|No default value|Edge node layers can be visualized if a container div's id is defined.|
 
 The almost complete options object:	
 ```javascript
-var options = {ltres:1, qtres:1, pathomit:8, rightangleenhance:true, colorsampling:2, numberofcolors:16, mincolorratio:0, colorquantcycles:3, blurradius:0, blurdelta:20, strokewidth:1, linefilter:false, scale:1, roundcoords:1, lcpr:0, qcpr:0, desc:false, viewbox:false };
+var options = {ltres:1, qtres:1, pathomit:8, rightangleenhance:true, colorsampling:2, numberofcolors:16, mincolorratio:0, colorquantcycles:3, blurradius:0, blurdelta:20, strokewidth:1, linefilter:false, scale:1, roundcoords:1, lcpr:0, qcpr:0, desc:false, viewbox:false, corsenabled:false };
 ```
 Adding custom palette. This will override numberofcolors.
 ```javascript
