@@ -145,27 +145,7 @@ imagetracerjs/nodecli/panda.svg was saved!
 
 #### Supported CLI arguments:
 
-<input file name must be the first argument REQUIRED>
-outfilename or -outfilename   REQUIRED
-ltres or -ltres
-qtres or -qtres
-pathomit or -pathomit
-rightangleenhance or -rightangleenhance
-colorsampling or -colorsampling
-numberofcolors or -numberofcolors
-mincolorratio or -mincolorratio
-colorquantcycles or -colorquantcycles
-blurradius or -blurradius
-blurdelta or -blurdelta
-strokewidth or -strokewidth
-linefilter or -linefilter
-scale or -scale
-roundcoords or -roundcoords
-viewbox or -viewbox
-desc or -desc
-lcpr or -lcpr
-qcpr or -qcpr
-corsenabled or -corsenabled
+*input file name must be the first argument* REQUIRED ; outfilename or -outfilename REQUIRED ; ltres or -ltres ; qtres or -qtres ; pathomit or -pathomit ; rightangleenhance or -rightangleenhance ; colorsampling or -colorsampling ; numberofcolors or -numberofcolors ; mincolorratio or -mincolorratio ; colorquantcycles or -colorquantcycles ; blurradius or -blurradius ; blurdelta or -blurdelta ;  strokewidth or -strokewidth ; linefilter or -linefilter ; scale or -scale ; roundcoords or -roundcoords ; viewbox or -viewbox ; desc or -desc ; lcpr or -lcpr ; qcpr or -qcpr ; corsenabled or -corsenabled
 
 ### Deterministic output
 ImageTracer version >= 1.2.0 is deterministic by default, but randomization can be turned back on.
