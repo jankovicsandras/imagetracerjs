@@ -74,6 +74,8 @@ ImageTracer.imageToSVG(
 |-----------|-------------|-------|
 |```pal```|No default value|Custom palette, an array of color objects: ```[ {r:0,g:0,b:0,a:255}, ... ]```|
 
+---
+
 ## Option presets
 
 ![Option presets gallery](docimages/option_presets.png)

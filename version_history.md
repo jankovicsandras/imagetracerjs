@@ -1,7 +1,7 @@
 ## Version history
 
 ### 1.2.4
- - options.layering : default 0 = sequential, new method ; 1 = parallel, old method. (Enhancement Issue #17)
+ - ```options.layering``` : default 0 = sequential, new method ; 1 = parallel, old method. (Enhancement Issue #17)
  - case insensitive option preset names
  - README.md reorganizing
 

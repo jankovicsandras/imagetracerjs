@@ -6,13 +6,13 @@ Simple raster image tracer and vectorizer written in JavaScript.
 ---
 
 ## Table of contents
-[Getting started](#getting-started)
-[News](#news)
-[API](#api)
-[Options](#options)
-[Examples](#examples)
-[Process overview](#process-overview)
-[License](#license)
+### [Getting started](#getting-started)
+### [News](#news)
+### [API](#api)
+### [Options](#options)
+### [Examples](#examples)
+### [Process overview](#process-overview)
+### [License](#license)
 
 ---
 
@@ -42,7 +42,7 @@ ImageTracer.imageToSVG(
 Node.js Command line interface example:
 
 ```
-imagetracerjs/nodecli>node nodecli ../panda.png outfilename panda.svg -scale 10
+imagetracerjs/nodecli>node nodecli ../panda.png outfilename panda.svg scale 10
 ```
 
 Expected result:
@@ -51,14 +51,12 @@ Expected result:
 imagetracerjs/nodecli/panda.svg was saved!
 ```
 
-Please read [nodecli/nodecli.js](https://github.com/jankovicsandras/imagetracerjs/blob/master/nodecli/nodecli.js) for details.
-
 ---
 
 ## News
 
 ### 1.2.4
- - options.layering : default 0 = sequential, new method ; 1 = parallel, old method. (Enhancement Issue #17)
+ - ```options.layering``` : default 0 = sequential, new method ; 1 = parallel, old method. (Enhancement Issue #17)
  - case insensitive option preset names
  - README.md reorganizing
 
@@ -96,24 +94,26 @@ You can use an option preset name (string) or an [options object](https://github
 ![Option presets gallery](docimages/option_presets_small.png)
 
 These strings can be passed instead of the options object:
-'default'
-'posterized1'
-'posterized2'
-'posterized3'
-'curvy'
-'sharp'
-'detailed'
-'smoothed'
-'grayscale'
-'fixedpalette'
-'randomsampling1'
-'randomsampling2'
-'artistic1'
-'artistic2'
-'artistic3'
-'artistic4'
+```'default'```
+```'posterized1'```
+```'posterized2'```
+```'posterized3'```
+```'curvy'```
+```'sharp'```
+```'detailed'```
+```'smoothed'```
+```'grayscale'```
+```'fixedpalette'```
+```'randomsampling1'```
+```'randomsampling2'```
+```'artistic1'```
+```'artistic2'```
+```'artistic3'```
+```'artistic4'```
 
 [Read more about options.](https://github.com/jankovicsandras/imagetracerjs/blob/master/options.md)
+
+---
 
 ## Examples
 
@@ -221,9 +221,14 @@ var ImageTracer = require( __dirname + '/../imagetracer_v1.2.4' );
 // , but other libraries can be used to load an image file to an ImageData object.
 var PNGReader = require( __dirname + '/PNGReader' );
 
+// Input and output filepaths / URLs
+var infilepath = __dirname + '/' + 'panda.png';
+var outfilepath = __dirname + '/' + 'panda.svg';
+
+
 fs.readFile(
 		
-	__dirname + '/' + 'panda.png', // Input file path
+	infilepath,
 	
 	function( err, bytes ){ // fs.readFile callback
 		if(err){ console.log(err); throw err; }
@@ -243,9 +248,9 @@ fs.readFile(
 			
 			// writing to file
 			fs.writeFile(
-				__dirname + '/' + outfilename, // Output file path
+				outfilepath,
 				svgstring,
-				function(err){ if(err){ console.log(err); throw err; } console.log( __dirname + '/'+outfilename+' was saved!' ); }
+				function(err){ if(err){ console.log(err); throw err; } console.log( outfilepath + ' was saved!' ); }
 			);
 			
 		});// End of reader.parse()
@@ -255,8 +260,12 @@ fs.readFile(
 );// End of fs.readFile()
 ```
 
+---
+
 ## Process overview
 See [Process overview and Ideas for improvement](https://github.com/jankovicsandras/imagetracerjs/blob/master/process_overview.md)
+
+---
 
 ## License
 ### The Unlicense / PUBLIC DOMAIN
