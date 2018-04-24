@@ -3,76 +3,140 @@
 
 Simple raster image tracer and vectorizer written in JavaScript.
 
-### 1.2.3
+---
 
- - Node.js Command line interface (Enhancement Issue #13)
- - FIXED: Pathomit problem thanks to EusthEnoptEron (Issue #14)
- - options.corsenabled for [CORS Image loading](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image) thanks to neel-radica (Issue #12)
+## Table of contents
+[Getting started](#getting-started)
+[News](#news)
+[API](#api)
+[Options](#options)
+[Examples](#examples)
+[Process overview](#process-overview)
+[License](#license)
 
-### 1.2.2
+---
 
- - FIXED: missing hole in path because of incorrect bounding box (Issue #11)
- - Posterized3 option preset
- - Changed svgpathstring() arguments to simplify getsvgstring()
+## Getting started
 
-### 1.2.1
-
- - FIXED: Gaussian blur preprocessing is now independent of DOM and canvas, thus working directly with Node.js (Issue #9)
-
-### 1.2.0
-
-This is a major update, changing some internal logic and option default values. The API is compatible, so it should work out of the box.
-
- - FIXED: transparent holes are now possible. ( Issue #7 and #8 )
- - Deterministic output by default: ```options.colorsampling = 2``` ; ```options.mincolorratio = 0``` are deterministic and the defaults now.
- - Right angle enhancing: ```options.rightangleenhance``` ( default : true )
- - Option presets (see below)
- - Custom strokewidth with ```options.strokewidth``` ( default : 1 )
- - Line filter with ```options.linefilter``` ( default : false )
- - Simplified ```getsvgstring()```; ```options.desc = false``` by default; splitpoint = fitpoint in fitseq(); small bugfixes and optimizations
-
-Version history and README for the old 1.1.2 version is [here.](README_v1.1.2.md)
-
-### Option presets
-
-Are you confused by the many parameters and their meaning in the options object? Just use a preset like this:
+### Using in the Browser
+Include the script:
 ```javascript
-// This uses the 'Posterized2' option preset and appends the SVG to an element with id="svgcontainer"
+<script src="imagetracer_v1.2.4.js"></script>
+```
+Then:
+```javascript
+// Loading an image, tracing with the 'posterized2' option preset, and appending the SVG to an element with id="svgcontainer"
 ImageTracer.imageToSVG(
-	'panda.png', // Input filename
-	function(svgstr){ ImageTracer.appendSVGString( svgstr, 'svgcontainer' ); }, // callback function to append the SVG to the svgcontainer div
-	'Posterized2' // Option preset
+
+	'panda.png', /* input filename / URL */
+	
+	function(svgstr){ ImageTracer.appendSVGString( svgstr, 'svgcontainer' ); }, /* callback function to run on SVG string result */
+	
+	'posterized2' /* Option preset */
+	
 );
 ```
 
+### Using with Node.js
+
+Node.js Command line interface example:
+
+```
+imagetracerjs/nodecli>node nodecli ../panda.png outfilename panda.svg -scale 10
+```
+
+Expected result:
+
+```
+imagetracerjs/nodecli/panda.svg was saved!
+```
+
+Please read [nodecli/nodecli.js](https://github.com/jankovicsandras/imagetracerjs/blob/master/nodecli/nodecli.js) for details.
+
+---
+
+## News
+
+### 1.2.4
+ - options.layering : default 0 = sequential, new method ; 1 = parallel, old method. (Enhancement Issue #17)
+ - case insensitive option preset names
+ - README.md reorganizing
+
+[Version history](https://github.com/jankovicsandras/imagetracerjs/blob/master/version_history.md)
+
+---
+
+## API
+|Function name|Arguments|Returns|Run type|
+|-------------|---------|-------|--------|
+|```imageToSVG```|```image_url /*string*/ , callback /*function*/ , options /*optional object or preset name*/```|Nothing, ```callback(svgstring)``` will be executed|Asynchronous, Browser only|
+|```imagedataToSVG```|```imagedata /*object*/ , options /*optional object or preset name*/```|```svgstring /*string*/```|Synchronous, Browser & Node.js|
+|```imageToTracedata```|```image_url /*string*/ , callback /*function*/ , options /*optional object or preset name*/```|Nothing, ```callback(tracedata)``` will be executed|Asynchronous, Browser only|
+|```imagedataToTracedata```|```imagedata /*object*/ , options /*optional object or preset name*/```|```tracedata /*object*/```|Synchronous, Browser & Node.js|
+
+```imagedata``` is standard [ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) here, ```canvas``` is [canvas](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas) .
+
+### Helper Functions (Browser only)
+|Function name|Arguments|Returns|Run type|
+|-------------|---------|-------|--------|
+|```appendSVGString```|```svgstring /*string*/, parentid /*string*/```|Nothing, an SVG will be appended to the container DOM element with id=parentid.|Synchronous, Browser only|
+|```loadImage```|```url /*string*/, callback /*function*/```|Nothing, loading an image from a URL, then executing ```callback(canvas)```|Asynchronous, Browser only|
+|```getImgdata```|```canvas /*object*/```|```imagedata /*object*/```|Synchronous, Browser only|
+
+```imagedata``` is standard [ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) here, ```canvas``` is [canvas](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas) .
+There are more functions for advanced users, read the source if you are interested. :)
+
+"Browser only" means that Node.js doesn't have built-in canvas and DOM support as of 2018, so loading an image to an ImageData object needs an external library. 
+
+---
+
+## Options
+You can use an option preset name (string) or an [options object](https://github.com/jankovicsandras/imagetracerjs/blob/master/options.md) to control the tracing and rendering process.
+
 ![Option presets gallery](docimages/option_presets_small.png)
 
-These strings can be passed instead of the options object: 'Default', 'Posterized1', 'Posterized2', 'Posterized3', 'Curvy', 'Sharp', 'Detailed', 'Smoothed', 'Grayscale', 'Fixedpalette', 'Randomsampling1', 'Randomsampling2', 'Artistic1', 'Artistic2', 'Artistic3', 'Artistic4' .
+These strings can be passed instead of the options object:
+'default'
+'posterized1'
+'posterized2'
+'posterized3'
+'curvy'
+'sharp'
+'detailed'
+'smoothed'
+'grayscale'
+'fixedpalette'
+'randomsampling1'
+'randomsampling2'
+'artistic1'
+'artistic2'
+'artistic3'
+'artistic4'
 
-Check out [imagetracer_options_gallery.html](https://github.com/jankovicsandras/imagetracerjs/blob/master/imagetracer_options_gallery.html) or a [bigger image](docimages/option_presets.png).
+[Read more about options.](https://github.com/jankovicsandras/imagetracerjs/blob/master/options.md)
 
-### Using in the browser
+## Examples
+
+### Using in the Browser
 Include the script:
 ```javascript
-<script src="imagetracer_v1.2.3.js"></script>
+<script src="imagetracer_v1.2.4.js"></script>
 ```
 Then
 ```javascript
 // Loading smiley.png, tracing and calling alert callback on the SVG string result 
 ImageTracer.imageToSVG( 'smiley.png', alert );
-```
-More examples:
-```javascript
+
 
 // Almost the same with options, and the ImageTracer.appendSVGString callback will append the SVG
 ImageTracer.imageToSVG( 'smiley.png', ImageTracer.appendSVGString, { ltres:0.1, qtres:1, scale:10, strokewidth:5 } );
 
 
-// This uses the 'Posterized2' option preset and appends the SVG to an element with id="svgcontainer"
+// This uses the 'posterized2' option preset and appends the SVG to an element with id="svgcontainer"
 ImageTracer.imageToSVG(
 	'panda.png',
 	function(svgstr){ ImageTracer.appendSVGString( svgstr, 'svgcontainer' ); },
-	'Posterized2'
+	'posterized2'
 );
 
 
@@ -127,14 +191,12 @@ ImageTracer.loadImage(
 );
 ```
 
-### Using with Node.js
-
-Please read nodecli/nodecli.js
+### Using with Node.js CLI
 
 Node.js Command line interface example:
 
 ```
-imagetracerjs/nodecli>node nodecli ../panda.png outfilename panda.svg -scale 10
+imagetracerjs/nodecli>node nodecli ../panda.png outfilename panda.svg scale 10
 ```
 
 Expected result:
@@ -143,88 +205,61 @@ Expected result:
 imagetracerjs/nodecli/panda.svg was saved!
 ```
 
-#### Supported CLI arguments:
+CLI parameter names are supported both with and without trailing dash: ```-scale 10``` and ```scale 10``` are both correct.
+Almost all options are supported, except ```pal``` and ```layercontainerid```.
 
-*input file name must be the first argument* REQUIRED ; outfilename or -outfilename REQUIRED ; ltres or -ltres ; qtres or -qtres ; pathomit or -pathomit ; rightangleenhance or -rightangleenhance ; colorsampling or -colorsampling ; numberofcolors or -numberofcolors ; mincolorratio or -mincolorratio ; colorquantcycles or -colorquantcycles ; blurradius or -blurradius ; blurdelta or -blurdelta ;  strokewidth or -strokewidth ; linefilter or -linefilter ; scale or -scale ; roundcoords or -roundcoords ; viewbox or -viewbox ; desc or -desc ; lcpr or -lcpr ; qcpr or -qcpr ; corsenabled or -corsenabled
+### Simple Node.js converting example
 
-### Deterministic output
-ImageTracer version >= 1.2.0 is deterministic by default, but randomization can be turned back on.
+```javascript
+"use strict";
 
-This is relevant to versions < 1.2.0 : [options for deterministic tracing](https://github.com/jankovicsandras/imagetracerjs/blob/master/deterministic.md)
+var fs = require('fs');
 
-### Main Functions
-|Function name|Arguments|Returns|Run type|
-|-------------|---------|-------|--------|
-|```imageToSVG```|```image_url /*string*/ , callback /*function*/ , options /*optional object*/```|Nothing, ```callback(svgstring)``` will be executed|Asynchronous|
-|```imagedataToSVG```|```imagedata /*object*/ , options /*optional object*/```|```svgstring /*string*/```|Synchronous|
-|```imageToTracedata```|```image_url /*string*/ , callback /*function*/ , options /*optional object*/```|Nothing, ```callback(tracedata)``` will be executed|Asynchronous|
-|```imagedataToTracedata```|```imagedata /*object*/ , options /*optional object*/```|```tracedata /*object*/```|Synchronous|
+var ImageTracer = require( __dirname + '/../imagetracer_v1.2.4' );
 
-```imagedata``` is standard [ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) here, ```canvas``` is [canvas](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas) .
+// This example uses https://github.com/arian/pngjs 
+// , but other libraries can be used to load an image file to an ImageData object.
+var PNGReader = require( __dirname + '/PNGReader' );
 
-#### Helper Functions
-|Function name|Arguments|Returns|Run type|
-|-------------|---------|-------|--------|
-|```appendSVGString```|```svgstring /*string*/, parentid /*string*/```|Nothing, an SVG will be appended to the container div with id=parentid.|Synchronous|
-|```loadImage```|```url /*string*/, callback /*function*/```|Nothing, loading an image from a URL, then executing ```callback(canvas)```|Asynchronous|
-|```getImgdata```|```canvas /*object*/```|```imagedata /*object*/```|Synchronous|
-
-```imagedata``` is standard [ImageData](https://developer.mozilla.org/en-US/docs/Web/API/ImageData) here, ```canvas``` is [canvas](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/canvas) .
-There are more functions for advanced users, read the source if you are interested. :)
+fs.readFile(
+		
+	__dirname + '/' + 'panda.png', // Input file path
 	
-### Options
-|Option name|Default value|Meaning|
-|-----------|-------------|-------|
-|```ltres```|```1```|Error treshold for straight lines.|
-|```qtres```|```1```|Error treshold for quadratic splines.|
-|```pathomit```|```8```|Edge node paths shorter than this will be discarded for noise reduction.|
-|```rightangleenhance```|```true```|Enhance right angle corners.|
-|```pal```|No default value|Custom palette, an array of color objects: ```[ {r:0,g:0,b:0,a:255}, ... ]```|
-|```colorsampling```|```2```|0: disabled, generating a palette; 1: random sampling; 2: deterministic sampling|
-|```numberofcolors```|```16```|Number of colors to use on palette if pal object is not defined.|
-|```mincolorratio```|```0```|Color quantization will randomize a color if fewer pixels than (total pixels*mincolorratio) has it.|
-|```colorquantcycles```|```3```|Color quantization will be repeated this many times.|
-|```blurradius```|```0```|Set this to 1..5 for selective Gaussian blur preprocessing.|
-|```blurdelta```|```20```|RGBA delta treshold for selective Gaussian blur preprocessing.|
-|```strokewidth```|```1```|[SVG stroke-width](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width)|
-|```linefilter```|```false```|Enable or disable line filter for noise reduction.|
-|```scale```|```1```|Every coordinate will be multiplied with this, to scale the SVG.|
-|```roundcoords```|```1```|rounding coordinates to a given decimal place. 1 means rounded to 1 decimal place like 7.3 ; 3 means rounded to 3 places, like 7.356|
-|```viewbox```|```false```|Enable or disable SVG viewBox.|
-|```desc```|```false```|Enable or disable SVG descriptions.|
-|```corsenabled```|```false```|Enable or disable [CORS Image loading](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image)|
-|```lcpr```|```0```|Straight line control point radius, if this is greater than zero, small circles will be drawn in the SVG. Do not use this for big/complex images.|
-|```qcpr```|```0```|Quadratic spline control point radius, if this is greater than zero, small circles and lines will be drawn in the SVG. Do not use this for big/complex images.|
-|```layercontainerid```|No default value|Edge node layers can be visualized if a container div's id is defined.|
-
-The almost complete options object:	
-```javascript
-var options = {ltres:1, qtres:1, pathomit:8, rightangleenhance:true, colorsampling:2, numberofcolors:16, mincolorratio:0, colorquantcycles:3, blurradius:0, blurdelta:20, strokewidth:1, linefilter:false, scale:1, roundcoords:1, lcpr:0, qcpr:0, desc:false, viewbox:false, corsenabled:false };
-```
-Adding custom palette. This will override numberofcolors.
-```javascript
-options.pal = [{r:0,g:0,b:0,a:255}, {r:0,g:0,b:255,a:255}, {r:255,g:255,b:0,a:255}];
+	function( err, bytes ){ // fs.readFile callback
+		if(err){ console.log(err); throw err; }
+	
+		var reader = new PNGReader(bytes);
+	
+		reader.parse( function( err, png ){ // PNGReader callback
+			if(err){ console.log(err); throw err; }
+			
+			// creating an ImageData object
+			var myImageData = { width:png.width, height:png.height, data:png.pixels };
+			
+			// tracing to SVG string
+			var options = { scale: 5 }; // options object; option preset string can be used also
+			
+			var svgstring = ImageTracer.imagedataToSVG( myImageData, options );
+			
+			// writing to file
+			fs.writeFile(
+				__dirname + '/' + outfilename, // Output file path
+				svgstring,
+				function(err){ if(err){ console.log(err); throw err; } console.log( __dirname + '/'+outfilename+' was saved!' ); }
+			);
+			
+		});// End of reader.parse()
+		
+	}// End of readFile callback()
+	
+);// End of fs.readFile()
 ```
 
-### Legacy 1.1.2 version
-
-The 1.1.2 version can be used like this: *ImageTracer112*.imageToSVG()
-
-Include the script:
-```javascript
-<script src="imagetracer_v1.1.2.js"></script>
-```
-Then
-```javascript
-// Loading smiley.png, tracing and calling alert callback on the SVG string result 
-ImageTracer112.imageToSVG( 'smiley.png', alert );
-```
-
-### Process overview
+## Process overview
 See [Process overview and Ideas for improvement](https://github.com/jankovicsandras/imagetracerjs/blob/master/process_overview.md)
 
-### License
-#### The Unlicense / PUBLIC DOMAIN
+## License
+### The Unlicense / PUBLIC DOMAIN
 
 This is free and unencumbered software released into the public domain.
 

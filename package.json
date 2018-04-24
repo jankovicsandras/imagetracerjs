@@ -1,8 +1,8 @@
 {
   "name": "imagetracerjs",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "raster image tracer and vectorizer, bitmap to SVG converter",
-  "main": "imagetracer_v1.2.3.js",
+  "main": "imagetracer_v1.2.4.js",
   "scripts": {
     "test": "node ./nodetest/nodetest.js"
   },
