@@ -6,13 +6,13 @@ Simple raster image tracer and vectorizer written in JavaScript.
 ---
 
 ## Table of contents
-### [Getting started](#getting-started)
-### [News](#news)
-### [API](#api)
-### [Options](#options)
-### [Examples](#examples)
-### [Process overview](#process-overview)
-### [License](#license)
+- [Getting started](#getting-started)
+- [News](#news)
+- [API](#api)
+- [Options](#options)
+- [Examples](#examples)
+- [Process overview](#process-overview)
+- [License](#license)
 
 ---
 
