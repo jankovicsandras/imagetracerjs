@@ -43,7 +43,7 @@ If the **fitseq** function can not fit a straight line or a quadratic spline to 
 The coordinates are rendered to [SVG Paths](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths) in the **getsvgstring** function.
 
 ### Ideas for improvement
-- 
+
 - Error handling: there's very little error handling now, Out of memory can happen easily with big images or many layers.
 - Color quantization: other algorithms e.g. https://en.wikipedia.org/wiki/Octree ?
 - Color quantization: colors with few pixels are randomized, but probably the most distant colors should be found instead.

@@ -1,5 +1,5 @@
 /*
-	imagetracer.js version 1.2.4
+	imagetracer.js version 1.2.5
 	Simple raster image tracer and vectorizer written in JavaScript.
 	andras@jankovics.net
 */
@@ -40,7 +40,7 @@ For more information, please refer to http://unlicense.org/
 function ImageTracer(){
 	var _this = this;
 
-	this.versionnumber = '1.2.4',
+	this.versionnumber = '1.2.5',
 	
 	////////////////////////////////////////////////////////////
 	//
@@ -243,6 +243,18 @@ function ImageTracer(){
 	// Using a form of k-means clustering repeatead options.colorquantcycles times. http://en.wikipedia.org/wiki/Color_quantization
 	this.colorquantization = function( imgd, options ){
 		var arr = [], idx=0, cd,cdl,ci, paletteacc = [], pixelnum = imgd.width * imgd.height, i, j, k, cnt, palette;
+		
+		// imgd.data must be RGBA, not just RGB
+		if( imgd.data.length < pixelnum * 4 ){
+			var newimgddata = new Uint8ClampedArray(pixelnum * 4);
+			for(var pxcnt = 0; pxcnt < pixelnum ; pxcnt++){
+				newimgddata[pxcnt*4  ] = imgd.data[pxcnt*3  ];
+				newimgddata[pxcnt*4+1] = imgd.data[pxcnt*3+1];
+				newimgddata[pxcnt*4+2] = imgd.data[pxcnt*3+2];
+				newimgddata[pxcnt*4+3] = 255;
+			}
+			imgd.data = newimgddata;
+		}// End of RGBA imgd.data check
 		
 		// Filling arr (color index array) with -1
 		for( j=0; j<imgd.height+2; j++ ){ arr[j]=[]; for(i=0; i<imgd.width+2 ; i++){ arr[j][i] = -1; } }
@@ -1107,7 +1119,6 @@ function ImageTracer(){
 	this.loadImage = function(url,callback,options){
 		var img = new Image();
 		if(options && options.corsenabled){ img.crossOrigin = 'Anonymous'; }
-		img.src = url;
 		img.onload = function(){
 			var canvas = document.createElement('canvas');
 			canvas.width = img.width;
@@ -1116,6 +1127,7 @@ function ImageTracer(){
 			context.drawImage(img,0,0);
 			callback(canvas);
 		};
+		img.src = url;
 	},
 	
 	// Helper function: getting ImageData from a canvas

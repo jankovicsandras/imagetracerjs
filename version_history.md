@@ -1,5 +1,8 @@
 ## Version history
 
+### 1.2.5
+ - RGBA ImageData check in colorquantization(), solving Issue #24 and #18
+
 ### 1.2.4
  - ```options.layering``` : default 0 = sequential, new method ; 1 = parallel, old method. (Enhancement Issue #17)
  - case insensitive option preset names
