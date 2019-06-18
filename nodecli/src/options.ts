@@ -21,8 +21,8 @@ export interface Options {
   // debug?: boolean
 
   /**
-   * output file format. Currently only png is supported
+   * output file format. Currently only svg is supported
    */
-  format?: 'png'
+  format?: 'svg'
 
 }

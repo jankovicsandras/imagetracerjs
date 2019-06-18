@@ -1,29 +1,15 @@
-"use strict";
+var ImageTracer = require(  '../..' );
 
-var fs = require('fs');
-
-var ImageTracer = require( __dirname + '/../imagetracer_v1.2.5' );
-
-// This example uses https://github.com/arian/pngjs 
-// , but other libraries can be used to load an image file to an ImageData object.
 import  PNGReader from 'png.js' 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
-type PNG = PNGReader['png']
-const options = require('minimist')(process.argv.slice(2))
 import { sync as glob } from 'glob'
 import { Options } from './options';
 import { basename, join } from 'path';
-import { promisify } from 'util';
 import { serial } from './util';
 
-// function main(options: Options) {
-// import { serial } from 'misc-utils-of-mine-generic'
-// import { basename, join } from 'path'
-// import { png2svg } from '../png2svg'
+type PNG = PNGReader['png']
 
-export async function imageTracer(options: Options) {
-  // try {
-
+export async function traceImage(options: Options) {
     preconditions(options)
     // options.debug && console.log(`CLI Options: ${JSON.stringify({ ...options, input: null })}`)
 
@@ -44,28 +30,10 @@ export async function imageTracer(options: Options) {
     await serial(input.map(input => async () => {
       try {
         // options.debug && console.log('Rendering ' + input.name)
-        
-        // tracing to SVG string
-        // var svgstring = ImageTracer.imagedataToSVG( {...png, data: png.pixels}, options );
-        // 
-        // writeFileSync()
-        
-        // // writing to file
-        // fs.writeFile(
-          // 	__dirname + '/' + outfilename, // Output file path
-          // 	svgstring,
-          // 	function(err){ if(err){ console.log(err); throw err; } console.log( __dirname + '/'+outfilename+' was saved!' ); }
-          // );
           const png = await  readPng(input.content )
-            // creating an ImageData object
-        // var myImageData = { width:png.width, height:png.height, data:png.pixels };
         const outputContent =  ImageTracer.imagedataToSVG( {...png, data: png.pixels}, options )
-        // ImageTracer.imagedataToSVG( {...png, data: png.pixels}, options )
-        // const result = ({ name: , content: })
         if (options.output) {
-          // const outputName =
-          const outputFilePath = join(options.output, basename( input.name + '.' + (options.format || 'png')))
-          // o.debug && console.log('Writing ' + file)
+          const outputFilePath = join(options.output, basename( input.name + '.' + (options.format || 'svg')))
           writeFileSync(outputFilePath, outputContent )
         }
         else {
@@ -76,40 +44,7 @@ export async function imageTracer(options: Options) {
         console.error(error)
       }
     }))
-
-// fs.readFileSync(
-		
-// 	__dirname + '/' + infilename, // Input file path
-	
-// 	function( err, bytes ){
-// 		if(err){ console.log(err); throw err; }
-	
-// 		var reader = new PNGReader(bytes);
-	
-// 		reader.parse( function( err, png ){
-// 			if(err){ console.log(err); throw err; }
-			
-// 			// creating an ImageData object
-// 			var myImageData = { width:png.width, height:png.height, data:png.pixels };
-			
-// 			// tracing to SVG string
-// 			var svgstring = ImageTracer.imagedataToSVG( myImageData, options );
-			
-// 			// writing to file
-// 			fs.writeFile(
-// 				__dirname + '/' + outfilename, // Output file path
-// 				svgstring,
-// 				function(err){ if(err){ console.log(err); throw err; } console.log( __dirname + '/'+outfilename+' was saved!' ); }
-// 			);
-			
-// 		});// End of reader.parse()
-		
-// 	}// End of readFile callback()
-	
-// );// End of fs.readFile()
-
 }
-//
 
 
 function readPng ( content:Buffer): Promise<PNG>{
@@ -122,9 +57,37 @@ function readPng ( content:Buffer): Promise<PNG>{
       }
     })
   })
-    // reader.parse( function( err, png )
 }
-// CLI arguments to options
+
+function preconditions(options: Options) {
+  if (!options.input) {
+    fail('--input argument is mandatory but not given. Aborting.')
+  }
+  if (options.help) {
+    printHelp()
+    process.exit(0)
+  }
+}
+
+function fail(msg: string) {
+  console.error(msg)
+  process.exit(1)
+}
+
+function printHelp() {
+  console.log(`
+Usage: 
+
+image-tracer --input "foo/imgs/**/*.png" --output bar/imgs-svg
+
+Options:
+
+TODO
+
+  `)
+}
+
+
 
 // var infilename = process.argv[2], outfilename = infilename+'.svg', options = {}, thisargname = '';
 // if(process.argv.length>3){
@@ -171,31 +134,4 @@ function readPng ( content:Buffer): Promise<PNG>{
 // 	}// End of argv loop
 	
 // }// End of command line argument list length check
-
-
-function preconditions(options: Options) {
-  if (!options.input) {
-    
-  }
-  if (options.help) {
-    printHelp()
-    process.exit(0)
-  }
-}
-
-
-function fail(msg: string) {
-  console.error(msg)
-  process.exit(1)
-}
-
-function printHelp() {
-  console.log(`
-Usage: 
-
-univac --language python3 --input src/main.py --output main.py.ast
-
-Options:
-  `)
-}
 
