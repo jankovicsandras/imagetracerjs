@@ -22,8 +22,8 @@ ImageTracer.imageToSVG(
 |Option name|Default value|Meaning|
 |-----------|-------------|-------|
 |```corsenabled```|```false```|Enable or disable [CORS Image loading](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image)|
-|```ltres```|```1```|Error treshold for straight lines.|
-|```qtres```|```1```|Error treshold for quadratic splines.|
+|```ltres```|```1```|Error threshold for straight lines.|
+|```qtres```|```1```|Error threshold for quadratic splines.|
 |```pathomit```|```8```|Edge node paths shorter than this will be discarded for noise reduction.|
 |```rightangleenhance```|```true```|Enhance right angle corners.|
 

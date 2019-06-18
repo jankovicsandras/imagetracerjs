@@ -11,7 +11,7 @@ type PNG = PNGReader['png']
 
 export async function traceImage(options: Options) {
     preconditions(options)
-    // options.debug && console.log(`CLI Options: ${JSON.stringify({ ...options, input: null })}`)
+    options.debug && console.log(`CLI Options: ${JSON.stringify({ ...options, input: null })}`)
 
     const input = (typeof options.input === 'string' ? glob(options.input).filter(existsSync) : [])
       .map(f => ({
@@ -29,7 +29,7 @@ export async function traceImage(options: Options) {
 
     await serial(input.map(input => async () => {
       try {
-        // options.debug && console.log('Rendering ' + input.name)
+        options.debug && console.log('Rendering ' + input.name)
           const png = await  readPng(input.content )
         const outputContent =  ImageTracer.imagedataToSVG( {...png, data: png.pixels}, options )
         if (options.output) {
