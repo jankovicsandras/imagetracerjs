@@ -21,6 +21,7 @@
   "homepage": "https://github.com/jankovicsandras/imagetracerjs#readme",
   "dependencies": {
     "glob": "^7.1.4",
+    "imagetracerjs": "git+https://github.com/jankovicsandras/imagetracerjs.git",
     "minimist": "^1.2.0",
     "png.js": "^0.2.1"
   },

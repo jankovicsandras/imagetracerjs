@@ -4,7 +4,7 @@ import { sync as glob } from 'glob'
 import { Options } from './options';
 import { basename, join } from 'path';
 import { serial, readPng } from './util';
-var ImageTracer = require( '../../..');
+var ImageTracer = require('imagetracerjs');
 
 export async function traceImage(options: Options) {
   preconditions(options)
