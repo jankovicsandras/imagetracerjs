@@ -1,11 +1,12 @@
-var ImageTracer = require(  '../..' );
 
 import  PNGReader from 'png.js' 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { sync as glob } from 'glob'
 import { Options } from './options';
 import { basename, join } from 'path';
-import { serial } from './util';
+import { serial, getPackageJsonFolder } from './util';
+var ImageTracer = require( '../../..');
+// var ImageTracer = require(getPackageJsonFolder('..')||'../../..');
 
 type PNG = PNGReader['png']
 

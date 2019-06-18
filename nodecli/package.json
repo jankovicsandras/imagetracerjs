@@ -6,14 +6,16 @@
   "types": "dist/src/main.d.ts",
   "bin": "bin/image-tracer.js",
   "scripts": {
-    "test": "exit 0;",
-    "build":"tsc",
+    "test": "ava",
+    "clean": "rm -rf dist tmp",
+    "build": "npm run clean && tsc",
     "prepare": "npm run build"
   },
-
   "devDependencies": {
     "@types/glob": "^7.1.1",
     "@types/node": "^12.0.7",
+    "@types/png.js": "^0.2.0",
+    "ava": "^2.1.0",
     "typescript": "^3.5.1"
   },
   "homepage": "https://github.com/jankovicsandras/imagetracerjs#readme",
@@ -22,7 +24,6 @@
     "minimist": "^1.2.0",
     "png.js": "^0.2.1"
   },
-
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jankovicsandras/imagetracerjs.git"
