@@ -1,5 +1,4 @@
-import { join } from 'path';
-import { existsSync } from 'fs';
+import PNGReader from 'png.js'
 
 /**
  * Execute given functions returning promises serially. Returns a promise that resolves when all finish with they results as array.
@@ -16,22 +15,16 @@ export function serial<T = any>(p: (() => Promise<T>)[]): Promise<T[]> {
   })
 }
 
+type PNG = PNGReader['png']
 
-let packageJsonFolder: string | undefined
-export function getPackageJsonFolder(f = __dirname): string | undefined {
-  // if (!isNode() && inBrowser()) {
-  //   return ''
-  // }
-  if (!packageJsonFolder) {
-    if (existsSync(join(f, 'package.json')) && existsSync(join(f, 'node_modules'))) {
-      packageJsonFolder = f
-    }
-    else {
-      const p = join(f, '..')
-      if (p && p !== '/') {
-        packageJsonFolder = getPackageJsonFolder(p)
+export function readPng(content: Buffer): Promise<PNG> {
+  return new Promise((resolve, reject) => {
+    return new PNGReader(content).parse((error, png) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve(png)
       }
-    }
-  }
-  return packageJsonFolder
+    })
+  })
 }

@@ -1,63 +1,46 @@
 
-import  PNGReader from 'png.js' 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { sync as glob } from 'glob'
 import { Options } from './options';
 import { basename, join } from 'path';
-import { serial, getPackageJsonFolder } from './util';
+import { serial, readPng } from './util';
 var ImageTracer = require( '../../..');
-// var ImageTracer = require(getPackageJsonFolder('..')||'../../..');
-
-type PNG = PNGReader['png']
 
 export async function traceImage(options: Options) {
-    preconditions(options)
-    options.debug && console.log(`CLI Options: ${JSON.stringify({ ...options, input: null })}`)
+  preconditions(options)
+  options.debug && console.log(`CLI Options: ${JSON.stringify({ ...options, input: null })}`)
 
-    const input = (typeof options.input === 'string' ? glob(options.input).filter(existsSync) : [])
-      .map(f => ({
-        name: f,
-        content: readFileSync(f)
-      }))
-
-      if(!input.length){
-        fail(`No input files found for ${input}. Aborting. `)
-      }
-
-    if (options.output && !existsSync(options.output)) {
-      mkdirSync(options.output, { recursive: true })
-    }
-
-    await serial(input.map(input => async () => {
-      try {
-        options.debug && console.log('Rendering ' + input.name)
-          const png = await  readPng(input.content )
-        const outputContent =  ImageTracer.imagedataToSVG( {...png, data: png.pixels}, options )
-        if (options.output) {
-          const outputFilePath = join(options.output, basename( input.name + '.' + (options.format || 'svg')))
-          writeFileSync(outputFilePath, outputContent )
-        }
-        else {
-          process.stdout.write(outputContent)
-        }
-      } catch (error) {
-        console.error('ERROR while rendering file ' + input.name)
-        console.error(error)
-      }
+  const input = (typeof options.input === 'string' ? glob(options.input).filter(existsSync) : [])
+    .map(f => ({
+      name: f,
+      content: readFileSync(f)
     }))
-}
 
+  if (!input.length) {
+    fail(`No input files found for ${input}. Aborting. `)
+  }
 
-function readPng ( content:Buffer): Promise<PNG>{
-  return new Promise((resolve, reject)=>{
-    return new PNGReader(content).parse((error, png)=>{
-      if(error){
-        reject(error)
-      }else {
-        resolve(png)
+  if (options.output && !existsSync(options.output)) {
+    mkdirSync(options.output, { recursive: true })
+  }
+
+  await serial(input.map(input => async () => {
+    try {
+      options.debug && console.log('Rendering ' + input.name)
+      const png = await readPng(input.content)
+      const outputContent = ImageTracer.imagedataToSVG({ ...png, data: png.pixels }, options)
+      if (options.output) {
+        const outputFilePath = join(options.output, basename(input.name + '.' + (options.format || 'svg')))
+        writeFileSync(outputFilePath, outputContent)
       }
-    })
-  })
+      else {
+        process.stdout.write(outputContent)
+      }
+    } catch (error) {
+      console.error('ERROR while rendering file ' + input.name)
+      console.error(error)
+    }
+  }))
 }
 
 function preconditions(options: Options) {
@@ -92,14 +75,14 @@ TODO
 
 // var infilename = process.argv[2], outfilename = infilename+'.svg', options = {}, thisargname = '';
 // if(process.argv.length>3){
-	
+
 // 	for(var i=3; i<process.argv.length; i+=2 ){
-		
+
 // 		thisargname = process.argv[i].toLowerCase();
-		
+
 // 		// Output file name
 // 		if(thisargname === 'outfilename' || thisargname === '-outfilename'){ outfilename = process.argv[i+1]; }
-		
+
 // 		// Tracing
 // 		if(thisargname === 'corsenabled' || thisargname === '-corsenabled'){ options.corsenabled = (process.argv[i+1].toLowerCase() === 'true'); }
 // 		if(thisargname === 'ltres' || thisargname === '-ltres'){ options.ltres = parseFloat(process.argv[i+1]); }
@@ -115,7 +98,7 @@ TODO
 
 // 		// Layering method
 // 		if(thisargname === 'layering' || thisargname === '-layering'){ options.layering = process.argv[i+1]; }
-		
+
 // 		// SVG rendering
 // 		if(thisargname === 'strokewidth' || thisargname === '-strokewidth'){ options.strokewidth = parseFloat(process.argv[i+1]); }
 // 		if(thisargname === 'linefilter' || thisargname === '-linefilter'){ options.linefilter = (process.argv[i+1].toLowerCase() === 'true'); }
@@ -129,10 +112,10 @@ TODO
 // 		// Blur
 // 		if(thisargname === 'blurradius' || thisargname === '-blurradius'){ options.blurradius = parseInt(process.argv[i+1]); }
 //     if(thisargname === 'blurdelta' || thisargname === '-blurdelta'){ options.blurdelta = parseInt(process.argv[i+1]); }		
-    
+
 //     if()
-		
+
 // 	}// End of argv loop
-	
+
 // }// End of command line argument list length check
 
