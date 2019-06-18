@@ -1,0 +1,53 @@
+{
+  "name": "image-tracer",
+  "version": "0.0.1",
+  "description": "Command line interface for imagetracerjs: raster image tracer and vectorizer, bitmap to SVG converter",
+  "main": "dist/src/main.js",
+  "types": "dist/src/main.d.ts",
+  "bin": "bin/image-tracer.js",
+  "scripts": {
+    "test": "exit 0;",
+    "build":"tsc",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jankovicsandras/imagetracerjs.git"
+  },
+  "keywords": [
+    "image",
+    "tracer",
+    "tracing",
+    "vector",
+    "raster",
+    "vectorize",
+    "vectorizing",
+    "convert",
+    "conversion",
+    "converting",
+    "tracing",
+    "bitmap",
+    "svg",
+    "bmp",
+    "png",
+    "jpg",
+    "jpeg",
+    "gif"
+  ],
+  "author": "András Jankovics",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/jankovicsandras/imagetracerjs/issues"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.1",
+    "@types/node": "^12.0.7",
+    "typescript": "^3.5.1"
+  },
+  "homepage": "https://github.com/jankovicsandras/imagetracerjs#readme",
+  "dependencies": {
+    "glob": "^7.1.4",
+    "minimist": "^1.2.0",
+    "png.js": "^0.2.1"
+  }
+}

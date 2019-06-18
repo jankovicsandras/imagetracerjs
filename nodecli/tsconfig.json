@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["esnext", "dom"], 
+    "strict": true, 
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "outDir": "./dist", 
+    "declaration": true,
+    "rootDir": ".",
+    "skipLibCheck": true
+  },
+  "include": [
+    "src", "test"
+  ],
+  "exclude": [
+    "node_modules","src/grammar", "probes"
+  ]
+}
