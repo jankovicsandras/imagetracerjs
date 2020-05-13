@@ -2,6 +2,7 @@
   "name": "imagetracerjs",
   "version": "1.2.5",
   "description": "raster image tracer and vectorizer, bitmap to SVG converter",
+  "bin": { "imagetracerjs": "./nodecli/nodecli.js" },
   "main": "imagetracer_v1.2.5.js",
   "scripts": {
     "test": "node ./nodetest/nodetest.js"
