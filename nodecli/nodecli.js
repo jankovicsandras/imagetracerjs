@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 
-var ImageTracer = require( __dirname + '/../imagetracer_v1.2.5' );
+var ImageTracer = require( __dirname + '/../imagetracer_v1.2.6' );
 
 // This example uses https://github.com/arian/pngjs 
 // , but other libraries can be used to load an image file to an ImageData object.
@@ -55,7 +55,7 @@ if(process.argv.length>3){
 
 fs.readFile(
 		
-	__dirname + '/' + infilename, // Input file path
+	infilename, // Input file path
 	
 	function( err, bytes ){
 		if(err){ console.log(err); throw err; }
@@ -73,9 +73,9 @@ fs.readFile(
 			
 			// writing to file
 			fs.writeFile(
-				__dirname + '/' + outfilename, // Output file path
+				outfilename, // Output file path
 				svgstring,
-				function(err){ if(err){ console.log(err); throw err; } console.log( __dirname + '/'+outfilename+' was saved!' ); }
+				function(err){ if(err){ console.log(err); throw err; } console.log( outfilename+' was saved!' ); }
 			);
 			
 		});// End of reader.parse()

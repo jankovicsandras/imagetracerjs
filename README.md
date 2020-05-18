@@ -21,7 +21,7 @@ Simple raster image tracer and vectorizer written in JavaScript.
 ### Using in the Browser
 Include the script:
 ```javascript
-<script src="imagetracer_v1.2.5.js"></script>
+<script src="imagetracer_v1.2.6.js"></script>
 ```
 Then:
 ```javascript
@@ -55,6 +55,9 @@ imagetracerjs/nodecli/panda.svg was saved!
 
 ## News
 
+### 1.2.6
+ - FIXED: hole shape parent search (Issues #31 #39)
+ - FIXED: Handle (absolute) paths in CLI correctly Issue #42
 
 ### 1.2.5
  - RGBA ImageData check in colorquantization(), solving Issue #24 and #18
@@ -124,7 +127,7 @@ These strings can be passed instead of the options object:
 ### Using in the Browser
 Include the script:
 ```javascript
-<script src="imagetracer_v1.2.5.js"></script>
+<script src="imagetracer_v1.2.6.js"></script>
 ```
 Then
 ```javascript
@@ -219,7 +222,7 @@ Almost all options are supported, except ```pal``` and ```layercontainerid```.
 
 var fs = require('fs');
 
-var ImageTracer = require( __dirname + '/../imagetracer_v1.2.5' );
+var ImageTracer = require( __dirname + '/../imagetracer_v1.2.6' );
 
 // This example uses https://github.com/arian/pngjs 
 // , but other libraries can be used to load an image file to an ImageData object.

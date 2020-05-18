@@ -1,5 +1,5 @@
 /*
-	imagetracer.js version 1.2.5
+	imagetracer.js version 1.2.6
 	Simple raster image tracer and vectorizer written in JavaScript.
 	andras@jankovics.net
 */
@@ -40,11 +40,11 @@ For more information, please refer to http://unlicense.org/
 function ImageTracer(){
 	var _this = this;
 
-	this.versionnumber = '1.2.5',
+	this.versionnumber = '1.2.6',
 	
 	////////////////////////////////////////////////////////////
 	//
-	//  User friendly functions
+	//  API
 	//
 	////////////////////////////////////////////////////////////
 	
@@ -481,6 +481,19 @@ function ImageTracer(){
 		return layer;
 	},// End of layeringstep()
 	
+	// Point in polygon test
+	this.pointinpoly = function( p, pa ){
+		var isin=false;
+
+		for(var i=0,j=pa.length-1; i<pa.length; j=i++){
+			isin =
+				( ((pa[i].y > p.y) !== (pa[j].y > p.y)) && (p.x < (pa[j].x - pa[i].x) * (p.y - pa[i].y) / (pa[j].y - pa[i].y) + pa[i].x) )
+				? !isin : isin;
+		}
+
+		return isin;
+	},
+	
 	// Lookup tables for pathscan
 	// pathscan_combined_lookup[ arr[py][px] ][ dir ] = [nextarrpypx, nextdir, deltapx, deltapy];
 	this.pathscan_combined_lookup = [
@@ -523,7 +536,7 @@ function ImageTracer(){
 					paths[pacnt].holechildren = [];
 					pathfinished = false;
 					pcnt=0;
-					holepath = ( arr[j][i] == 11);
+					holepath = (arr[j][i]==11);
 					dir = 1;
 
 					// Path points loop
@@ -563,7 +576,8 @@ function ImageTracer(){
 									for(var parentcnt=0; parentcnt < pacnt; parentcnt++){
 										if( (!paths[parentcnt].isholepath) &&
 											_this.boundingboxincludes( paths[parentcnt].boundingbox , paths[pacnt].boundingbox ) &&
-											_this.boundingboxincludes( parentbbox , paths[parentcnt].boundingbox )
+											_this.boundingboxincludes( parentbbox , paths[parentcnt].boundingbox ) &&
+											_this.pointinpoly( paths[pacnt].points[0], paths[parentcnt].points )
 										){
 											parentidx = parentcnt;
 											parentbbox = paths[parentcnt].boundingbox;
