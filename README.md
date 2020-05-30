@@ -267,6 +267,9 @@ fs.readFile(
 );// End of fs.readFile()
 ```
 
+### Tracedata processing / Simplify.js example
+It's possible to process the traced geometry and color data before SVG rendering. This example [simplify_interop.html](https://github.com/jankovicsandras/imagetracerjs/blob/master/simplify_interop.html) shows polyline simplification. You need to download simplify.js from https://github.com/mourner/simplify-js .
+
 ---
 
 ## Process overview
