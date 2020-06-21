@@ -39,6 +39,12 @@ ImageTracer.imageToSVG(
 
 ### Using with Node.js
 
+```
+npm install -s imagetracerjs
+```
+
+or
+
 Node.js Command line interface example:
 
 ```
@@ -222,11 +228,11 @@ Almost all options are supported, except ```pal``` and ```layercontainerid```.
 
 var fs = require('fs');
 
-var ImageTracer = require( __dirname + '/../imagetracer_v1.2.6' );
+var ImageTracer = require('imagetracerjs');
 
 // This example uses https://github.com/arian/pngjs 
 // , but other libraries can be used to load an image file to an ImageData object.
-var PNGReader = require( __dirname + '/PNGReader' );
+var PNGReader = require('imagetracerjs').PNGReader;
 
 // Input and output filepaths / URLs
 var infilepath = __dirname + '/' + 'panda.png';

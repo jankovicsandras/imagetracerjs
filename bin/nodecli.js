@@ -2,11 +2,11 @@
 
 var fs = require('fs');
 
-var ImageTracer = require( __dirname + '/../imagetracer_v1.2.6' );
+var ImageTracer = require( __dirname + '/../src/index' );
 
 // This example uses https://github.com/arian/pngjs 
 // , but other libraries can be used to load an image file to an ImageData object.
-var PNGReader = require( __dirname + '/PNGReader' );
+var PNGReader = require( __dirname + '/../src/index' ).PNGReader;
 
 // CLI arguments to options
 var infilename = process.argv[2], outfilename = infilename+'.svg', options = {}, thisargname = '';
