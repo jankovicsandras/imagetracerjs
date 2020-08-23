@@ -11,6 +11,7 @@ Simple raster image tracer and vectorizer written in JavaScript.
 - [API](#api)
 - [Options](#options)
 - [Examples](#examples)
+- [InkScape extension](#inkscape-extension)
 - [Process overview](#process-overview)
 - [License](#license)
 
@@ -56,6 +57,7 @@ imagetracerjs/nodecli/panda.svg was saved!
 ## News
 
 ### 1.2.6
+ - NEW: [InkScape extension](#inkscape-extension)
  - FIXED: hole shape parent search (Issues #31 #39)
  - FIXED: Handle (absolute) paths in CLI correctly Issue #42
 
@@ -269,6 +271,15 @@ fs.readFile(
 
 ### Tracedata processing / Simplify.js example
 It's possible to process the traced geometry and color data before SVG rendering. This example [simplify_interop.html](https://github.com/jankovicsandras/imagetracerjs/blob/master/simplify_interop.html) shows polyline simplification. You need to download simplify.js from https://github.com/mourner/simplify-js .
+
+---
+
+## InkScape extension
+ImageTracer is available as an InkScape extension: [https://inkscape.org/~MarioVoigt/%E2%98%85imagetracerjs-for-inkscape-1x](https://inkscape.org/~MarioVoigt/%E2%98%85imagetracerjs-for-inkscape-1x)
+
+[Screenshots](https://github.com/jankovicsandras/imagetracerjs/issues/47)
+
+Thanks Mario Voigt!
 
 ---
 
