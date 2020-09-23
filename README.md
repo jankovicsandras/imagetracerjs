@@ -11,6 +11,7 @@ Simple raster image tracer and vectorizer written in JavaScript.
 - [API](#api)
 - [Options](#options)
 - [Examples](#examples)
+- [InkScape extension](#inkscape-extension)
 - [Process overview](#process-overview)
 - [License](#license)
 
@@ -21,7 +22,7 @@ Simple raster image tracer and vectorizer written in JavaScript.
 ### Using in the Browser
 Include the script:
 ```javascript
-<script src="imagetracer_v1.2.5.js"></script>
+<script src="imagetracer_v1.2.6.js"></script>
 ```
 Then:
 ```javascript
@@ -55,6 +56,10 @@ imagetracerjs/nodecli/panda.svg was saved!
 
 ## News
 
+### 1.2.6
+ - NEW: [InkScape extension](#inkscape-extension)
+ - FIXED: hole shape parent search (Issues #31 #39)
+ - FIXED: Handle (absolute) paths in CLI correctly Issue #42
 
 ### 1.2.5
  - RGBA ImageData check in colorquantization(), solving Issue #24 and #18
@@ -124,7 +129,7 @@ These strings can be passed instead of the options object:
 ### Using in the Browser
 Include the script:
 ```javascript
-<script src="imagetracer_v1.2.5.js"></script>
+<script src="imagetracer_v1.2.6.js"></script>
 ```
 Then
 ```javascript
@@ -219,7 +224,7 @@ Almost all options are supported, except ```pal``` and ```layercontainerid```.
 
 var fs = require('fs');
 
-var ImageTracer = require( __dirname + '/../imagetracer_v1.2.5' );
+var ImageTracer = require( __dirname + '/../imagetracer_v1.2.6' );
 
 // This example uses https://github.com/arian/pngjs 
 // , but other libraries can be used to load an image file to an ImageData object.
@@ -263,6 +268,18 @@ fs.readFile(
 	
 );// End of fs.readFile()
 ```
+
+### Tracedata processing / Simplify.js example
+It's possible to process the traced geometry and color data before SVG rendering. This example [simplify_interop.html](https://github.com/jankovicsandras/imagetracerjs/blob/master/simplify_interop.html) shows polyline simplification. You need to download simplify.js from https://github.com/mourner/simplify-js .
+
+---
+
+## InkScape extension
+ImageTracer is available as an InkScape extension: [https://inkscape.org/~MarioVoigt/%E2%98%85imagetracerjs-for-inkscape-1x](https://inkscape.org/~MarioVoigt/%E2%98%85imagetracerjs-for-inkscape-1x)
+
+[Screenshots](https://github.com/jankovicsandras/imagetracerjs/issues/47)
+
+Thanks Mario Voigt!
 
 ---
 

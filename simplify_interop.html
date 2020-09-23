@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script src="imagetracer_v1.2.6.js"></script>
+	<script src="simplify.js"></script>
+	<script>
+
+		function onload_init(){
+			
+			var options = { ltres:0.1, qtres:1, scale:4, strokewidth:4 };
+			
+			// This will load an image, trace it when loaded, and execute callback on the tracedata
+			ImageTracer.imageToTracedata(
+				'panda.png',
+				function(tracedata){
+				
+					// Counting total original points; copying and simplifying points in newpointscontainer 
+					var pointcnt = 0, newpointscontainer = [];
+					
+					// layers loop
+					for(var i=0; i<tracedata.layers.length; i++){
+					
+						newpointscontainer[i] = [];
+					
+						// paths loop
+						for(var j=0; j<tracedata.layers[i].length; j++){
+						
+							newpointscontainer[i][j] = [];
+							
+							// register first point
+							newpointscontainer[i][j].push({x: tracedata.layers[i][j].segments[0].x1, y: tracedata.layers[i][j].segments[0].y1 });
+						
+							// segments loop
+							for(var k=0; k<tracedata.layers[i][j].segments.length; k++){
+							
+								// register next point
+								newpointscontainer[i][j].push({x: tracedata.layers[i][j].segments[k].x2, y: tracedata.layers[i][j].segments[k].y2 });
+								pointcnt++;
+								
+								if(tracedata.layers[i][j].segments[k].hasOwnProperty('x3')){
+
+									// register next point
+									newpointscontainer[i][j].push({x: tracedata.layers[i][j].segments[k].x3, y: tracedata.layers[i][j].segments[k].y3 });
+									pointcnt++;
+									
+								}// End of x3 check
+								
+							}// End of segments loop
+							
+							// simplify with tolerance = 2 ; highQuality = true
+							newpointscontainer[i][j] = simplify(newpointscontainer[i][j], 2, true);
+	
+						}// End of paths loop
+						
+					}// End of layers loop
+					
+					// log original SVG stats
+					document.getElementById('log').innerHTML += 'Original point count: '+pointcnt+'<br/>';
+					
+					// display original SVG
+					ImageTracer.appendSVGString( ImageTracer.getsvgstring(tracedata,options), 'svgcontainer' );
+					
+					// Copying the new, simplified points back to tracedata
+					// As we don't know how and which segment is affected, 
+					// whether quadratic spline controlpoints or endpoints were deleted,
+					// we will just assume everything is linear, no quadratic splines will be used
+					
+					pointcnt = 0;
+					
+					// layers loop
+					for(var i=0; i<tracedata.layers.length; i++){
+					
+						// paths loop
+						for(var j=0; j<tracedata.layers[i].length; j++){
+							
+							// reset this path segments
+							tracedata.layers[i][j].segments = [];
+							
+							// count new points
+							pointcnt += newpointscontainer[i][j].length;
+						
+							// segments loop
+							for(var k=0; k<newpointscontainer[i][j].length; k++){
+							
+								// create new segments from new points
+								tracedata.layers[i][j].segments.push(
+									{
+									type:'L',
+									x1: newpointscontainer[i][j][k].x,
+									y1: newpointscontainer[i][j][k].y,
+									x2: newpointscontainer[i][j][(k+1)%newpointscontainer[i][j].length].x,
+									y2: newpointscontainer[i][j][(k+1)%newpointscontainer[i][j].length].y
+									}
+								);
+								
+							}// End of segments loop
+	
+							if(j===0){ console.log(JSON.stringify(tracedata.layers[i][j].segments)); }
+	
+						}// End of paths loop
+						
+					}// End of layers loop
+					
+					// log new SVG stats
+					document.getElementById('log').innerHTML += 'New point count: '+pointcnt+'<br/>';
+					
+					// display new SVG
+					ImageTracer.appendSVGString( ImageTracer.getsvgstring(tracedata,options), 'svgcontainer' );
+					
+					
+				},// End of imageToTracedata() callback
+				
+				options // for tracing
+				
+			);// End of imageToTracedata()
+
+		}// End of onload_init()
+		
+	</script>
+</head>
+<body style="background-color:rgb(32,32,32);color:rgb(255,255,255);font-family:monospace;" onload="onload_init()" >
+	<noscript style="background-color:rgb(255,0,0);color:rgb(255,255,255);font-size: 250%;">Please enable JavaScript!</noscript>
+	<div id="svgcontainer"></div> <div id="log"></div>
+</body>
+</html>

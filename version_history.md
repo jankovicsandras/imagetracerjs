@@ -1,5 +1,9 @@
 ## Version history
 
+### 1.2.6
+ - FIXED: hole shape parent search (Issues #31 #39)
+ - FIXED: Handle (absolute) paths in CLI correctly Issue #42
+
 ### 1.2.5
  - RGBA ImageData check in colorquantization(), solving Issue #24 and #18
 
