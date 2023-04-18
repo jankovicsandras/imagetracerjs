@@ -55,3 +55,4 @@ The coordinates are rendered to [SVG Paths](https://developer.mozilla.org/en-US/
 - Output: [PDF](https://en.wikipedia.org/wiki/Portable_Document_Format), [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF),   [G-code](https://en.wikipedia.org/wiki/G-code) or other output?
 - comparing and integrating ideas from https://en.wikipedia.org/wiki/Potrace
 - Pathomit with background hole path shrinking 
+- Centerline tracing, Issue #65 
