@@ -220,53 +220,29 @@ Almost all options are supported, except ```pal``` and ```layercontainerid```.
 ### Simple Node.js converting example
 
 ```javascript
-"use strict";
-
-var fs = require('fs');
-
-var ImageTracer = require( __dirname + '/../imagetracer_v1.2.6' );
-
+import fs from 'fs'
+import ImageTracer from 'imagetracerjs'
 // This example uses https://github.com/arian/pngjs 
 // , but other libraries can be used to load an image file to an ImageData object.
-var PNGReader = require( __dirname + '/PNGReader' );
+import { PNG } from 'pngjs'
 
 // Input and output filepaths / URLs
-var infilepath = __dirname + '/' + 'panda.png';
-var outfilepath = __dirname + '/' + 'panda.svg';
+var inputFilePath = './image.png'
+var outputFilePath = './iimage.svg'
 
+const data = fs.readFileSync(inputFilePath)
+const png = PNG.sync.read(data)
 
-fs.readFile(
-		
-	infilepath,
-	
-	function( err, bytes ){ // fs.readFile callback
-		if(err){ console.log(err); throw err; }
-	
-		var reader = new PNGReader(bytes);
-	
-		reader.parse( function( err, png ){ // PNGReader callback
-			if(err){ console.log(err); throw err; }
-			
-			// creating an ImageData object
-			var myImageData = { width:png.width, height:png.height, data:png.pixels };
-			
-			// tracing to SVG string
-			var options = { scale: 5 }; // options object; option preset string can be used also
-			
-			var svgstring = ImageTracer.imagedataToSVG( myImageData, options );
-			
-			// writing to file
-			fs.writeFile(
-				outfilepath,
-				svgstring,
-				function(err){ if(err){ console.log(err); throw err; } console.log( outfilepath + ' was saved!' ); }
-			);
-			
-		});// End of reader.parse()
-		
-	}// End of readFile callback()
-	
-);// End of fs.readFile()
+// creating an ImageData object
+const myImageData = { width: png.width, height: png.height, data: png.data }
+
+// tracing to SVG string
+const options = { scale: 5 } // options object; option preset string can be used also
+
+const svgstring = ImageTracer.imagedataToSVG(myImageData, options)
+
+// writing to file
+fs.writeFileSync(outputFilePath, svgstring)
 ```
 
 ### Tracedata processing / Simplify.js example
