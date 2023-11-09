@@ -22,8 +22,8 @@ ImageTracer.imageToSVG(
 |Option name|Default value|Meaning|
 |-----------|-------------|-------|
 |```corsenabled```|```false```|Enable or disable [CORS Image loading](https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image)|
-|```ltres```|```1```|Error treshold for straight lines.|
-|```qtres```|```1```|Error treshold for quadratic splines.|
+|```ltres```|```1```|Error threshold for straight lines.|
+|```qtres```|```1```|Error threshold for quadratic splines.|
 |```pathomit```|```8```|Edge node paths shorter than this will be discarded for noise reduction.|
 |```rightangleenhance```|```true```|Enhance right angle corners.|
 
@@ -49,7 +49,7 @@ ImageTracer.imageToSVG(
 |```strokewidth```|```1```|[SVG stroke-width](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-width)|
 |```linefilter```|```false```|Enable or disable line filter for noise reduction.|
 |```scale```|```1```|Every coordinate will be multiplied with this, to scale the SVG.|
-|```roundcoords```|```1```|rounding coordinates to a given decimal place. 1 means rounded to 1 decimal place like 7.3 ; 3 means rounded to 3 places, like 7.356|
+|```roundcoords```|```1```|Rounding coordinates to a given decimal place. 1 means rounded to 1 decimal place like 7.3 ; 3 means rounded to 3 places, like 7.356|
 |```viewbox```|```false```|Enable or disable SVG viewBox.|
 |```desc```|```false```|Enable or disable SVG descriptions.|
 
@@ -58,7 +58,7 @@ ImageTracer.imageToSVG(
 |Option name|Default value|Meaning|
 |-----------|-------------|-------|
 |```blurradius```|```0```|Set this to 1..5 for selective Gaussian blur preprocessing.|
-|```blurdelta```|```20```|RGBA delta treshold for selective Gaussian blur preprocessing.|
+|```blurdelta```|```20```|RGBA delta threshold for selective Gaussian blur preprocessing.|
 
 #### Debug
 
